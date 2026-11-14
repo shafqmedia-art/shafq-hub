@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-s9TbxbjDnZ5bHI0HKIPs4m6zoIPkFxbdNFhyedRMhwo='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-lGGF8klqUWs5OSQAE6lnbi9eS2VYs8Xr4jfZ5Y9bAA0='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>شفق ميديا | كل يوم شفق جديد لمشروعك</title>
@@ -663,6 +663,44 @@
     sn.addEventListener('mouseenter', on);
     sn.addEventListener('mouseleave', off);
     sn.addEventListener('click', () => { sn.classList.add('tap'); on(); setTimeout(() => { sn.classList.remove('tap'); off(); }, 1400); });
+  });
+
+
+  // سكرول بالماوس: كل حركة عجلة بتنقلك شاشة كاملة
+  const screens = [...document.querySelectorAll('.screen')];
+  let busy = false, quietT = 0, doneT = 0;
+  const idx = () => {
+    const y = window.scrollY + window.innerHeight * 0.4;
+    let i = 0; screens.forEach((s, k) => { if (s.offsetTop <= y) i = k; }); return i;
+  };
+  const go = (i) => {
+    i = Math.max(0, Math.min(screens.length - 1, i));
+    busy = true; clearTimeout(doneT);
+    window.scrollTo({ top: screens[i].offsetTop, behavior: 'smooth' });
+    doneT = setTimeout(() => { doneT = 0; }, 750);
+  };
+  const release = () => { clearTimeout(quietT); quietT = setTimeout(() => { if (!doneT) busy = false; else release(); }, 180); };
+  window.addEventListener('wheel', (e) => {
+    if (e.ctrlKey || Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
+    const i = idx(), s = screens[i], down = e.deltaY > 0;
+    const top = s.offsetTop, bottom = top + s.offsetHeight, vh = window.innerHeight, y = window.scrollY;
+    // إذا الشاشة أطول من الشاشة الحقيقية (متل الخدمات عالشاشات الصغيرة) خلّيه يسكرول عادي جواتها
+    if (s.offsetHeight > vh * 1.2) {
+      if (down && y + vh < bottom - 2) return;
+      if (!down && y > top + 2) return;
+    }
+    e.preventDefault();
+    release();
+    if (busy || Math.abs(e.deltaY) < 4) return;
+    go(i + (down ? 1 : -1));
+  }, { passive: false });
+  window.addEventListener('keydown', (e) => {
+    if (/input|textarea/i.test(document.activeElement.tagName)) return;
+    const k = { PageDown: 1, ArrowDown: 1, ' ': 1, PageUp: -1, ArrowUp: -1 }[e.key];
+    if (!k || busy) return;
+    const s = screens[idx()];
+    if (s.offsetHeight > window.innerHeight * 1.2) return;
+    e.preventDefault(); go(idx() + k); release();
   });
 
   // كل قسم بيطلع بحركة لما يوصله الزائر
