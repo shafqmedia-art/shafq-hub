@@ -1,0 +1,87 @@
+import asyncio,subprocess,json
+from playwright.async_api import async_playwright
+B='http://localhost:8770/index.html'; R=[]
+def ok(n,c,e=''): R.append((n,bool(c),str(e)))
+def sql(q): return subprocess.run(['psql','-h','/tmp','-p','5544','-U','postgres','-d','shafq','-At','-c',q],capture_output=True,text=True).stdout.strip()
+async def fill_modal(page,vals):
+    for k,v in vals.items():
+        el=page.locator(f'#m_{k}')
+        if await el.evaluate('e=>e.tagName')=='SELECT': await el.select_option(v)
+        else: await el.fill(v)
+    await page.locator('#modal button[type=submit]').click(); await page.wait_for_timeout(900)
+async def idle(page): await page.wait_for_timeout(1200)
+async def main():
+    async with async_playwright() as p:
+        b=await p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--no-sandbox'])
+        errs=[]
+        async def ctx():
+            c=await b.new_context(viewport={'width':1440,'height':1000},service_workers='block'); pg=await c.new_page()
+            pg.on('pageerror',lambda e:errs.append(str(e))); pg.on('dialog',lambda d:asyncio.ensure_future(d.accept())); return pg
+        mgr=await ctx(); await mgr.goto(B); await idle(mgr)
+        ok('first run shows setup',await mgr.locator('form[data-form=setup]').count()==1)
+        await mgr.fill('#s_name','عبد الرحمن'); await mgr.fill('#s_phone','0952 000 000'); await mgr.fill('#s_pass','secret12'); await mgr.click('form[data-form=setup] button'); await mgr.wait_for_timeout(2500)
+        ok('manager dashboard',await mgr.locator('#clock').count()==1)
+        ok('manager row in DB',sql("select role||'|'||login_phone from profiles")=='manager|0952000000',sql("select role||'|'||login_phone from profiles"))
+        await mgr.fill('#rate','12000'); await mgr.locator('#rate').press('Tab'); await idle(mgr)
+        ok('rate stored on server',sql('select rate from rates')=='12000',sql('select rate from rates'))
+        await mgr.goto(B+'#/clients'); await idle(mgr); await mgr.click('[data-act=addClient]'); await fill_modal(mgr,{'name':'الخباز','value':'650','months':'3'})
+        cid=sql('select id from clients'); ok('client on server',len(cid)==36)
+        await mgr.goto(B+'#/team'); await idle(mgr); await mgr.click('[data-act=addMember]'); await fill_modal(mgr,{'name':'مصور تجريبي','title':'مصور','phone':'0911111111','contract':'200','pass':'12345678'}); await idle(mgr)
+        mid=sql("select id from profiles where role='member'"); ok('member profile on server',len(mid)==36,mid)
+        ok('manager session kept after creating member',await mgr.locator('.who b').inner_text()=='عبد الرحمن')
+        await mgr.click('[data-act=addMember]'); await fill_modal(mgr,{'name':'مكرر','phone':'0911111111','pass':'12345678'})
+        ok('duplicate member phone rejected','مسجل' in await mgr.locator('#merr').inner_text()); await mgr.click('#modal [data-act=close]')
+        await mgr.goto(B+'#/tasks'); await idle(mgr); await mgr.click('[data-act=addTask]'); await fill_modal(mgr,{'title':'تصوير منتجات','user_id':mid,'client_id':cid})
+        ok('task on server with client name',sql('select client_name from tasks')=='الخباز')
+        await mgr.goto(B+'#/finance'); await idle(mgr)
+        await mgr.click('.acts [data-act=addMove]'); await fill_modal(mgr,{'amount':'250','client_id':cid})
+        await mgr.click('.acts [data-act=addMove]'); await fill_modal(mgr,{'dir':'out','cat':'مواصلات','amount':'120000','cur':'SYP'})
+        await mgr.click('.acts [data-act=addMove]'); await fill_modal(mgr,{'dir':'out','cat':'أجر فريق','amount':'50','user_id':mid})
+        ok('moves on server, SYP→$10',sql("select string_agg(usd::text,',' order by created_at) from moves")=='250,10,50',sql("select string_agg(usd::text,',' order by created_at) from moves"))
+        await mgr.reload(); await idle(mgr)
+        kp=await mgr.locator('.kpi b').all_inner_texts(); ok('after reload data comes from server',kp==['$250','$60','$190','$190'],kp)
+        # --- second device: member
+        mem=await ctx(); await mem.goto(B); await idle(mem)
+        ok('second device shows login not setup',await mem.locator('form[data-form=login]').count()==1)
+        await mem.fill('#l_phone','0911111111'); await mem.fill('#l_pass','wrong1'); await mem.click('form[data-form=login] button'); await idle(mem)
+        ok('wrong password rejected','غير صحيحة' in await mem.locator('#aerr').inner_text(),await mem.locator('#aerr').inner_text())
+        await mem.fill('#l_pass','12345678'); await mem.click('form[data-form=login] button'); await mem.wait_for_timeout(2000)
+        ok('member view on second device',await mem.locator('h1').first.inner_text()=='أهلاً، مصور تجريبي')
+        d=await mem.evaluate('({u:SHAFQ.db().users.length,c:SHAFQ.db().clients.length,m:SHAFQ.db().moves.length,t:SHAFQ.db().tasks.length,r:Object.keys(SHAFQ.db().rates).length})')
+        ok('member device received only own data',d=={'u':1,'c':0,'m':1,'t':1,'r':0},d)
+        kp=await mem.locator('.kpi b').all_inner_texts(); ok('member dues $150',kp[3]=='$150',kp)
+        ok('task shows client name for member','الخباز' in await mem.locator('.tile').first.inner_text())
+        await mem.locator('input[data-chg=task]').first.check(); await idle(mem)
+        ok('member marks task done on server',sql('select done from tasks')=='t')
+        # member tampering via console: change title / contract / add move
+        await mem.evaluate('(()=>{const d=SHAFQ.db(); d.tasks[0].title="مخترق"; d.users[0].contract=9999; d.users[0].role="manager"; d.users[0].bio="نبذة";})()')
+        await mem.evaluate('document.querySelector("[data-act=theme]").click()'); await mem.goto(B+'#/profile'); await idle(mem)
+        await mem.fill('#p_city','دمشق'); await mem.click('form[data-form=profile] button[type=submit]'); await idle(mem)
+        ok('server blocks member escalation, allows own profile edit',sql("select role||'|'||contract||'|'||city||'|'||(select title from tasks) from profiles where role='member'")=='member|200|دمشق|تصوير منتجات',sql("select role||'|'||contract||'|'||coalesce(city,'')||'|'||(select title from tasks) from profiles where id='%s'"%mid))
+        # --- manager sees member's change (sync) + token refresh
+        await mgr.goto(B+'#/tasks'); await mgr.reload(); await idle(mgr)
+        ok('manager sees task done by member',await mgr.evaluate('SHAFQ.db().tasks[0].done')==True)
+        await mgr.evaluate('fetch("/__expire")'); await mgr.wait_for_timeout(300)
+        await mgr.goto(B+'#/finance'); await idle(mgr); await mgr.click('[data-act=addDebt]'); await fill_modal(mgr,{'party':'محل تأجير','usd':'80'}); await idle(mgr)
+        ok('expired token refreshed, debt saved',sql('select count(*) from debts')=='1',sql('select count(*) from debts'))
+        await mgr.locator('[data-act=voidMove]').first.click(); await idle(mgr)
+        ok('void kept on server',sql('select count(*)||\'|\'||count(*) filter (where is_void) from moves')=='3|1')
+        # change password
+        await mgr.goto(B+'#/profile'); await idle(mgr); await mgr.click('[data-act=chPass]'); await fill_modal(mgr,{'p1':'newpass1','p2':'newpass1'})
+        # deactivate member
+        await mgr.goto(B+'#/team'); await idle(mgr); await mgr.locator('details.tile > summary').first.click(); await mgr.click('[data-act=toggleMember]'); await idle(mgr)
+        await mem.reload(); await idle(mem)
+        ok('deactivated member locked out','غير مفعّل' in await mem.locator('h1').first.inner_text(),await mem.locator('h1').first.inner_text())
+        # logout + login with new password
+        await mgr.goto(B+'#/profile'); await idle(mgr); await mgr.click('[data-act=logout]'); await mgr.wait_for_timeout(1500)
+        ok('after logout shows login',await mgr.locator('form[data-form=login]').count()==1)
+        await mgr.fill('#l_phone','0952000000'); await mgr.fill('#l_pass','secret12'); await mgr.click('form[data-form=login] button'); await idle(mgr)
+        ok('old password rejected','غير صحيحة' in await mgr.locator('#aerr').inner_text())
+        await mgr.fill('#l_pass','newpass1'); await mgr.click('form[data-form=login] button'); await mgr.wait_for_timeout(2000)
+        ok('login with new password',await mgr.locator('#clock').count()==1)
+        await mgr.screenshot(path='/tmp/srv_dash.png')
+        ok('no JS errors',not errs,'; '.join(errs)[:300])
+        await b.close()
+    for n,c,e in R: print('PASS' if c else 'FAIL',n,'' if c else '→ '+e)
+    print(f'{sum(1 for r in R if r[1])}/{len(R)} passed')
+asyncio.run(main())
