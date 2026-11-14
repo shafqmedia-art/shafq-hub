@@ -1,0 +1,43 @@
+import asyncio,json,urllib.request
+from playwright.async_api import async_playwright
+U='http://localhost:8770/index.html'; R=[]
+def ok(n,c,e=''): R.append(c); print(('PASS ' if c else 'FAIL ')+n,'' if c else e)
+def notes(): return json.load(urllib.request.urlopen('http://localhost:8770/__notify'))
+async def fm(page,vals,submit=True):
+    for k,v in vals.items():
+        el=page.locator(f'#m_{k}')
+        if await el.evaluate('e=>e.tagName')=='SELECT': await el.select_option(v)
+        else: await el.fill(v)
+    if submit: await page.locator('#modal button[type=submit]').click(); await page.wait_for_timeout(1000)
+async def main():
+    async with async_playwright() as p:
+        b=await p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--no-sandbox'])
+        ctx=await b.new_context(viewport={'width':1300,'height':900},service_workers='block')
+        page=await ctx.new_page(); errs=[]; page.on('pageerror',lambda e:errs.append(str(e)))
+        await page.goto(U); await page.wait_for_timeout(1200)
+        await page.fill('#s_name','عبد الرحمن'); await page.fill('#s_phone','0952000000'); await page.fill('#s_pass','secret12'); await page.click('form[data-form=setup] button'); await page.wait_for_timeout(1800)
+        await page.goto(U+'#/team'); await page.wait_for_timeout(400)
+        await page.click('[data-act=addMember]'); await fm(page,{'name':'هديل خليفه','gender':'f','phone':'0991197675','pass':'12345678'})
+        hid=await page.evaluate("SHAFQ.db().users.filter(u=>u.name=='هديل خليفه')[0].id")
+        await page.locator('details.tile').evaluate_all('es=>es.forEach(e=>e.open=true)')
+        await page.locator('[data-act=sendNote]').first.click(); await page.wait_for_timeout(300)
+        opts=await page.locator('#m_kind option').all_inner_texts(); ok('feminine presets',opts[0]=='شو صار معكِ؟' and opts[-1]=='رسالة أخرى…',str(opts))
+        await page.select_option('#m_kind','paid'); t=await page.input_value('#m_text'); ok('preset fills text','أستاذة هديل خليفه' in t and 'دفعة' in t,t)
+        await page.select_option('#m_kind','other'); ok('other clears text',await page.input_value('#m_text')=='')
+        await fm(page,{'text':'بكرا اجتماع الساعة ١٠'})
+        n=notes(); ok('custom note sent',any(i['to']==[hid] and i['body']=='بكرا اجتماع الساعة ١٠' and 'شفق' in i['title'] for x in n for i in x['items']))
+        ok('not-enabled message shown','ما وصل' in await page.locator('#merr').inner_text(),await page.locator('#merr').inner_text())
+        await page.click('#modal [data-act=close]')
+        await page.goto(U+'#/clients'); await page.wait_for_timeout(300)
+        await page.click('[data-act=addClient]'); await fm(page,{'name':'الخباز','value':'500','months':'3'})
+        cid=await page.evaluate('SHAFQ.db().clients[0].id')
+        await page.goto(U+'#/client/'+cid); await page.wait_for_timeout(400)
+        ok('no client note before login',await page.locator('[data-act=sendNote]').count()==0)
+        await page.click('[data-act=clientLogin]'); await fm(page,{'phone':'0944444444','pass':'client12'}); await page.wait_for_timeout(800)
+        await page.click('[data-act=sendNote]'); await page.wait_for_timeout(300)
+        await page.select_option('#m_kind','due'); t=await page.input_value('#m_text'); ok('client due preset with amount','$500' in t,t)
+        await fm(page,{})
+        n=notes(); ok('client note sent',any(i['to']=={'client':cid} and 'الدفعة' in i['body'] for x in n for i in x['items']))
+        ok('no js errors',not errs,str(errs))
+        await b.close()
+asyncio.run(main()); print('%d/%d'%(sum(R),len(R)))
