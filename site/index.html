@@ -559,7 +559,9 @@ function openMedia(w){const b=document.getElementById('lbbox');const y=ytId(w.vi
   else if(w.image)b.innerHTML=`<img src="${esc(w.image)}" alt="">`;else return;
   document.getElementById('lb').classList.add('open')}
 document.getElementById('lbx').onclick=()=>{document.getElementById('lb').classList.remove('open');document.getElementById('lbbox').innerHTML=''};
+const fixU=u=>!u||/^(https?:|data:|blob:|\/)/.test(u)?u:'../'+u;
 function applyContent(c){
+  if(c.works)c.works=c.works.map(w=>Object.assign({},w,{image:fixU(w.image),video:ytId(w.video)?w.video:fixU(w.video)}));
   if(c.hero)document.querySelector('.hero h1 .ln span').innerHTML=c.hero;
   if(c.stats)document.querySelectorAll('.stats .stat').forEach((el,i)=>{const d=c.stats[i];if(!d)return;el.querySelector('b').textContent=d.n;el.querySelector('span').textContent=d.t});
   if(c.package){const k=['reels','posts','carousel','friday'];document.querySelectorAll('.incl .cnt').forEach((b,i)=>{b.dataset.to=c.package[k[i]];b.textContent=c.package[k[i]]})}
@@ -571,7 +573,7 @@ function applyContent(c){
       return `<article class="work ${size} rv in" data-c="${esc(w.cat)}" data-i="${i}"><div class="media m${(i%5)+1}${bg}">${vid}</div>${w.video||w.image?'<div class="play">▶</div>':''}<div class="info"><span class="tag">${esc(w.tag)}</span><h3>${esc(w.title)}</h3><p>${esc(w.desc)}</p>${w.type?`<div class="meta"><span>${esc(w.type)}</span></div>`:''}</div></article>`}).join('');
     W.querySelectorAll('.work').forEach(a=>a.onclick=()=>openMedia(c.works[+a.dataset.i]));}
 }
-fetch('content.json?'+Date.now()).then(r=>r.ok?r.json():null).then(c=>c&&applyContent(c)).catch(()=>{});
+fetch('../content.json?'+Date.now()).then(r=>r.ok?r.json():null).then(c=>c&&applyContent(c)).catch(()=>{});
 </script>
 </body>
 </html>
