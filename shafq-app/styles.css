@@ -202,3 +202,10 @@ html.intro-on, html.intro-on body{overflow:hidden}
 .linkbtn{background:none;border:0;color:var(--act);font:inherit;font-size:17px;font-weight:800;text-decoration:underline;text-underline-offset:4px;cursor:pointer;padding:10px;align-self:center;min-height:44px}
 .wa-big{display:flex;align-items:center;justify-content:center;background:#25D366!important;color:#fff!important;border-color:#25D366!important}
 @media (max-width:600px){.auth{padding:16px}.auth .card{padding:28px 20px}}
+
+/* الرجوع للموقع العام */
+a.brand{text-decoration:none;color:inherit;border-radius:12px;transition:opacity .2s}
+a.brand:hover{opacity:.8}
+.nav a.brand{min-height:0;padding:0 8px 12px;font-weight:inherit}
+.timebox .site-link{display:inline-flex;align-items:center;justify-content:center;margin-top:12px;min-height:40px;padding:0 14px;border:1px solid var(--ac);border-radius:999px;color:var(--act);font-weight:800;font-size:13px;text-decoration:none;align-self:flex-start}
+.timebox .site-link:hover{background:var(--ac);color:var(--onac)}

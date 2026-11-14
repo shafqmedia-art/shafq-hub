@@ -99,7 +99,7 @@
   /* ---------- قطع الواجهة ---------- */
   function kpi(label, val, hi, sub) { return '<div class="kpi' + (hi ? ' hi' : '') + '"><span>' + h(label) + '</span><b>' + h(val) + '</b>' + (sub ? '<small>' + h(sub) + '</small>' : '') + '</div>'; }
   function tile(title, summ, body, open) { return '<details class="tile"' + (open ? ' open' : '') + '><summary><div><h2>' + h(title) + '</h2><span>' + summ + '</span></div>' + CHEV + '</summary><div class="body">' + body + '</div></details>'; }
-  function rows(list) { return list.length ? '<div class="rows">' + list.map(function (r) { return '<div><span>' + r[0] + '</span><span class="mu">' + r[1] + '</span></div>'; }).join('') + '</div>' : '<p class="empty">لا شيء بعد.</p>'; }
+  function rows(list) { return list.length ? '<div class="rows">' + list.map(function (r) { return '<div><span>' + r[0] + '</span><span class="mu">' + r[1] + '</span><a class="site-link" href="/">↩ الموقع العام</a></div>'; }).join('') + '</div>' : '<p class="empty">لا شيء بعد.</p>'; }
   function btn(label, act, data, cls) { var d = ''; Object.keys(data || {}).forEach(function (k) { d += ' data-' + k + '="' + h(data[k]) + '"'; }); return '<button type="button" class="btn ' + (cls || '') + '" data-act="' + act + '"' + d + '>' + h(label) + '</button>'; }
   function avatar(u) { return '<span class="av" aria-hidden="true">' + (u.photo ? '<img src="' + h(u.photo) + '" alt="">' : h((u.name || '؟').charAt(0))) + '</span>'; }
 
@@ -114,7 +114,7 @@
   function route() { return location.hash || '#/'; }
   function navHtml() {
     var r = route(), base = r.indexOf('#/client/') === 0 ? '#/clients' : r, out = '';
-    out += '<div class="brand"><img class="lg-w" src="' + LOGO_W + '" alt="شعار شفق"><img class="lg-b" src="' + LOGO_B + '" alt="شعار شفق"><div><b>شفق ميديا</b><span>' + (isMgr() ? 'نظام إدارة الأعمال' : 'واجهة الفريق') + '</span></div></div>';
+    out += '<a class="brand" href="/" title="ارجع لموقع شفق ميديا"><img class="lg-w" src="' + LOGO_W + '" alt="شعار شفق"><img class="lg-b" src="' + LOGO_B + '" alt="شعار شفق"><div><b>شفق ميديا</b><span>' + (isMgr() ? 'نظام إدارة الأعمال' : 'واجهة الفريق') + '</span></div></a>';
     if (!isMgr()) { return out + MNAV.map(function (i) { return '<a href="' + i[1] + '" class="' + (base === i[1] ? 'on' : '') + '">' + i[0] + '</a>'; }).join('') + timeBox(); }
     NAV.forEach(function (g) {
       var has = g[1].some(function (i) { return i[1] && i[1] === base; }) || (r.indexOf('#/soon/') === 0 && g[1].some(function (i) { return '#/soon/' + encodeURIComponent(i[0]) === r; }));
@@ -678,7 +678,7 @@
   }
   function vPortal() {
     var d = portalData(), now = new Date(), t = today();
-    var top = '<div class="ptop"><div class="brand"><img class="lg-w" src="' + LOGO_W + '" alt="شعار شفق"><img class="lg-b" src="' + LOGO_B + '" alt="شعار شفق"><div><b>شفق ميديا</b><span>بوابة العميل</span></div></div><div class="acts">' + btn(document.body.classList.contains('t-light') ? 'الثيم الغامق' : 'الثيم الفاتح', 'theme') + btn('تسجيل الخروج', 'logout') + '</div></div>';
+    var top = '<div class="ptop"><a class="brand" href="/" title="ارجع لموقع شفق ميديا"><img class="lg-w" src="' + LOGO_W + '" alt="شعار شفق"><img class="lg-b" src="' + LOGO_B + '" alt="شعار شفق"><div><b>شفق ميديا</b><span>بوابة العميل</span></div></a><div class="acts">' + btn(document.body.classList.contains('t-light') ? 'الثيم الغامق' : 'الثيم الفاتح', 'theme') + btn('تسجيل الخروج', 'logout') + '</div></div>';
     if (!d) return '<div class="portal">' + top + (pstate.err ? '<p class="warn">تعذر تحميل البوابة: ' + h(pstate.err) + '</p>' + btn('إعادة المحاولة', 'portalRefresh', {}, 'pri') : '<p class="empty">جارٍ التحميل…</p>') + '</div>';
     var cl = d.client || {}, ym = pstate.month || t.slice(0, 7), mname;
     try { mname = new Intl.DateTimeFormat('ar-SY-u-nu-latn', { month: 'long', year: 'numeric' }).format(new Date(ym + '-15T12:00:00')); } catch (x) { mname = ym; }
