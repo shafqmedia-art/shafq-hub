@@ -1,731 +1,269 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-lGGF8klqUWs5OSQAE6lnbi9eS2VYs8Xr4jfZ5Y9bAA0='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'; upgrade-insecure-requests">
-<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>شفق ميديا | كل يوم شفق جديد لمشروعك</title>
-<meta name="description" content="شفق ميديا — كل يوم شفق جديد لمشروعك. موقع شفق، شفق بوت للرد التلقائي، ونظام إدارة الفريق والعملاء.">
-<link rel="icon" type="image/png" href="data:image/png;base64,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">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://ypsarmfjbkxgoepmibia.supabase.co; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>شفق ميديا | وكالة تسويق ومحتوى من دمشق</title>
+<meta name="description" content="شفق ميديا وكالة تسويق ومحتوى من دمشق. ندير حساباتك على وسائل التواصل، ونصوّر مشاريعك وفعالياتك، ونبني لك خطة محتوى تحقق النتيجة.">
+<meta property="og:title" content="شفق ميديا | وكالة تسويق ومحتوى">
+<meta property="og:description" content="كل يوم شفق جديد لعلامتك.">
+<meta property="og:image" content="https://shafqmedia.com/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://shafqmedia.com/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ar_SY">
+<meta property="og:site_name" content="شفق ميديا">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://shafqmedia.com/">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "ProfessionalService", "name": "شفق ميديا", "alternateName": "Shafq Media", "url": "https://shafqmedia.com/", "logo": "https://shafqmedia.com/assets/icon-192.png", "image": "https://shafqmedia.com/assets/og.jpg", "description": "وكالة تسويق ومحتوى من دمشق: إدارة حسابات التواصل، إنتاج الفيديو، التصوير الجوي، وتغطية المؤتمرات والمعارض.", "email": "shafqmedia@gmail.com", "address": {"@type": "PostalAddress", "addressLocality": "دمشق", "addressCountry": "SY"}, "areaServed": "SY", "sameAs": ["https://www.instagram.com/shafq.media"]}</script>
+<meta name="theme-color" content="#121212">
+<link rel="icon" type="image/png" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --lime:#C8F03C;
-    --lime-soft:rgba(200,240,60,.14);
-    --black:#0A0A0A;
-    --ink:#121212;
-    --card:#151515;
-    --line:rgba(242,240,234,.09);
-    --off:#F2F0EA;
-    --muted:rgba(242,240,234,.62);
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth;scroll-snap-type:y proximity}
-  body{
-    font-family:'Cairo',system-ui,sans-serif;
-    background:var(--black);
-    color:var(--off);
-    min-height:100vh;
-    overflow-x:hidden;
-    -webkit-font-smoothing:antialiased;
-  }
-  a{color:inherit;text-decoration:none}
-
-  /* ---------- top bar ---------- */
-  .top{
-    position:absolute;top:0;left:0;right:0;z-index:20;
-    display:flex;align-items:center;justify-content:space-between;
-    max-width:none;margin:0 auto;padding:22px clamp(16px,1.8vw,36px);
-  }
-  .brand{display:flex;align-items:center;gap:12px;font-weight:900;font-size:22px}
-  .brand-logo{height:clamp(52px,4.4vw,72px);width:auto;display:block}
-  @media (max-width:520px){.brand-logo{height:38px}}
-  .brand small{display:block;font-size:10px;letter-spacing:3px;font-weight:600;color:var(--muted);direction:ltr;text-align:right;margin-top:-4px}
-  .top-cta{
-    font-size:14px;font-weight:700;
-    padding:9px 18px;border-radius:999px;
-    border:1px solid var(--line);
-    transition:.25s;
-  }
-  .top-cta:hover{border-color:var(--lime);color:var(--lime)}
-
-  /* ---------- hero ---------- */
-  /* ---------- الشاشات التلاتة ---------- */
-  .screen{position:relative;min-height:100vh;min-height:100svh;scroll-snap-align:start}
-  .hero{
-    text-align:center;
-    padding:clamp(84px,13vh,120px) 24px 0;
-    overflow:hidden;
-    display:flex;flex-direction:column;justify-content:center;
-    --p:0;--hz:13vh;
-  }
-  .sky{
-    position:absolute;inset:0;z-index:0;pointer-events:none;
-    /* مع النزول: الشمس بتغيب لتحت */
-    transform:translateY(calc(var(--p) * 35vh));
-    opacity:calc(1 - var(--p) * 1.1);
-  }
-  /* ---------- الشمس: بتطلع من ورا خط الأفق ---------- */
-  .halo{
-    position:absolute;left:50%;bottom:var(--hz);
-    width:min(1500px,170vw);height:min(760px,90vw);border-radius:50%;
-    transform:translate(-50%,50%) scale(.5);
-    background:radial-gradient(ellipse at center, rgba(200,240,60,.42) 0%, rgba(200,240,60,.15) 28%, rgba(200,240,60,.05) 48%, transparent 66%);
-    opacity:0;animation:haloIn 3s ease .4s forwards;
-  }
-  @keyframes haloIn{to{opacity:1;transform:translate(-50%,50%) scale(1)}}
-  .sun-wrap{position:absolute;left:0;right:0;bottom:var(--hz);height:clamp(360px,40vw,560px);overflow:hidden}
-  .sun-core{
-    position:absolute;left:50%;bottom:0;
-    width:clamp(180px,min(24vw,34vh),340px);aspect-ratio:1;border-radius:50%;
-    background:radial-gradient(circle at 50% 35%, #EEFF9E 0%, var(--lime) 45%, #B4DC25 100%);
-    box-shadow:0 0 50px 8px rgba(200,240,60,.5), 0 0 140px 40px rgba(200,240,60,.2);
-    transform:translate(-50%,100%);
-    animation:sunrise 2.8s cubic-bezier(.2,.8,.2,1) .3s forwards;
-  }
-  @keyframes sunrise{to{transform:translate(-50%,50%)}}
-  .horizon{
-    position:absolute;left:0;right:0;bottom:var(--hz);height:2px;
-    background:linear-gradient(90deg,transparent 0%,rgba(200,240,60,.25) 15%,rgba(200,240,60,.9) 38%,#F4FFC4 50%,rgba(200,240,60,.9) 62%,rgba(200,240,60,.25) 85%,transparent 100%);
-    box-shadow:0 0 16px rgba(200,240,60,.55);
-    transform:scaleX(0);animation:hzIn 1.6s cubic-bezier(.2,.8,.2,1) .1s forwards;
-  }
-  @keyframes hzIn{to{transform:scaleX(1)}}
-  /* انعكاس الشمس تحت الأفق */
-  .reflect{
-    position:absolute;left:50%;bottom:0;height:var(--hz);
-    width:clamp(220px,26vw,380px);transform:translateX(-50%);
-    background:repeating-linear-gradient(to bottom, rgba(200,240,60,.38) 0 2px, transparent 2px 8px);
-    -webkit-mask:linear-gradient(to bottom,#000 0%,transparent 90%);
-            mask:linear-gradient(to bottom,#000 0%,transparent 90%);
-    opacity:0;animation:fade 2s ease 2s forwards;
-  }
-  .rays{
-    position:absolute;left:50%;bottom:var(--hz);transform:translateX(-50%);
-    width:1600px;height:800px;opacity:0;
-    background:repeating-conic-gradient(from 270deg at 50% 100%, rgba(200,240,60,.07) 0deg 3deg, transparent 3deg 12deg);
-    -webkit-mask:radial-gradient(circle at 50% 100%, #000 0%, transparent 60%);
-            mask:radial-gradient(circle at 50% 100%, #000 0%, transparent 60%);
-    animation:fade 2s ease 1.4s forwards;
-  }
-  @keyframes fade{to{opacity:1}}
-
-  .hero-inner{
-    position:relative;z-index:2;padding-bottom:calc(var(--hz) + clamp(70px,min(11vw,16vh),160px));
-    transform:translateY(calc(var(--p) * -90px)) scale(calc(1 - var(--p) * .12));
-    opacity:calc(1 - var(--p) * 1.3);
-    filter:blur(calc(var(--p) * 6px));
-    will-change:transform,opacity;
-  }
-  /* لما تمرق الماوس على «شفق جديد» الشمس بتتوهج */
-  .sun-core,.halo,.rays{transition:filter .5s, box-shadow .5s}
-  body.glow .sun-core{box-shadow:0 0 80px 20px rgba(200,240,60,.75), 0 0 220px 70px rgba(200,240,60,.3);filter:brightness(1.1)}
-  body.glow .halo{filter:brightness(1.5)}
-  body.glow .rays{filter:brightness(2.4)}
-  .eyebrow{
-    display:inline-flex;align-items:center;gap:8px;
-    font-size:13px;font-weight:700;letter-spacing:.5px;
-    color:var(--lime);
-    background:var(--lime-soft);
-    border:1px solid rgba(200,240,60,.25);
-    padding:6px 14px;border-radius:999px;
-    opacity:0;animation:up .8s ease .3s forwards;
-  }
-  .eyebrow i{width:6px;height:6px;border-radius:50%;background:var(--lime);box-shadow:0 0 10px var(--lime)}
-  .wordmark{
-    font-size:clamp(72px,min(18vw,21vh),190px);
-    font-weight:900;line-height:1.35;
-    margin-top:6px;
-    letter-spacing:-2px;
-    opacity:0;animation:up 1s ease .45s forwards;
-  }
-  .wordmark span{color:var(--lime)}
-  .latin{
-    direction:ltr;
-    font-size:clamp(12px,1.6vw,15px);font-weight:600;
-    letter-spacing:clamp(6px,1.4vw,12px);
-    color:var(--muted);
-    margin-top:clamp(4px,1.2vw,14px);
-    position:relative;z-index:1;
-    opacity:0;animation:up 1s ease .6s forwards;
-  }
-  .slogan{
-    margin-top:clamp(10px,2.6vh,26px);
-    font-size:clamp(22px,3.6vw,36px);
-    font-weight:700;
-    opacity:0;animation:up 1s ease .8s forwards;
-  }
-  .sn{
-    position:relative;
-    color:var(--black);background:var(--lime);
-    padding:0 14px;border-radius:12px;
-    display:inline-block;transform:rotate(-1.5deg);
-    cursor:default;
-    transition:transform .5s cubic-bezier(.3,1.6,.4,1), box-shadow .5s;
-  }
-  .sn span{display:inline-block;transition:transform .45s cubic-bezier(.3,1.8,.4,1)}
-  /* حركة «شفق جديد» عند مرور الماوس */
-  .sn::before{
-    content:"";position:absolute;inset:-60% -30%;z-index:-1;border-radius:50%;
-    background:repeating-conic-gradient(rgba(200,240,60,.55) 0deg 4deg, transparent 4deg 16deg);
-    -webkit-mask:radial-gradient(circle, transparent 28%, #000 30%, transparent 70%);
-            mask:radial-gradient(circle, transparent 28%, #000 30%, transparent 70%);
-    opacity:0;transform:scale(.4) rotate(0deg);
-    transition:opacity .4s, transform .8s cubic-bezier(.2,.8,.2,1);
-    pointer-events:none;
-  }
-  .sn::after{
-    content:"";position:absolute;inset:0;border-radius:inherit;
-    background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.75) 50%,transparent 70%);
-    background-size:250% 100%;background-position:120% 0;
-    pointer-events:none;
-  }
-  .sn:hover,.sn.tap{transform:rotate(0) scale(1.1);box-shadow:0 0 0 6px rgba(200,240,60,.18),0 0 60px 8px rgba(200,240,60,.45)}
-  .sn:hover::before,.sn.tap::before{opacity:1;transform:scale(1) rotate(40deg)}
-  .sn:hover::after,.sn.tap::after{animation:shine 1s ease}
-  .sn:hover span:first-child,.sn.tap span:first-child{transform:translateY(-7px) rotate(-4deg)}
-  .sn:hover span:last-child,.sn.tap span:last-child{transform:translateY(-7px) rotate(4deg);transition-delay:.08s}
-  @keyframes shine{to{background-position:-120% 0}}
-
-  /* سهم «انزل» */
-  .cue{
-    position:absolute;right:clamp(16px,3vw,48px);bottom:calc(var(--hz) / 2 - 28px);z-index:5;
-    display:flex;flex-direction:column;align-items:center;gap:6px;
-    color:var(--muted);font-size:12px;font-weight:700;letter-spacing:.5px;
-    opacity:calc(1 - var(--p) * 3);
-  }
-  .cue i{width:22px;height:36px;border:2px solid rgba(242,240,234,.35);border-radius:999px;position:relative}
-  .cue i::after{content:"";position:absolute;left:50%;top:8px;width:4px;height:8px;margin-left:-2px;border-radius:4px;background:var(--lime);animation:wheel 1.6s ease-in-out infinite}
-  @keyframes wheel{0%{transform:translateY(0);opacity:1}70%{transform:translateY(14px);opacity:0}100%{opacity:0}}
-
-  /* الانتقال بين الشاشات: كل عنصر بيطلع لما يبيّن */
-  [data-reveal]{opacity:0;transform:translateY(40px);transition:opacity .9s ease, transform 1s cubic-bezier(.2,.8,.2,1)}
-  [data-reveal].in{opacity:1;transform:none}
-  [data-reveal="2"]{transition-delay:.15s}[data-reveal="3"]{transition-delay:.3s}[data-reveal="4"]{transition-delay:.45s}
-
-  /* ---------- الشاشة التانية ---------- */
-  .screen2{display:flex;flex-direction:column;justify-content:center;padding:90px 0 60px}
-  .dawn{position:relative;text-align:center;margin-bottom:clamp(28px,4vw,56px)}
-  .dawn-art{position:relative;height:clamp(140px,15vw,210px)}
-  .dawn-glow{position:absolute;left:50%;bottom:0;width:clamp(320px,38vw,600px);height:clamp(160px,19vw,300px);transform:translate(-50%,50%);border-radius:50%;background:radial-gradient(ellipse at center, rgba(200,240,60,.34) 0%, rgba(200,240,60,.1) 35%, transparent 68%);opacity:0;transition:opacity 1.6s ease .7s, filter .5s}
-  .dawn.in .dawn-glow{opacity:1}
-  /* نفس شمس الشاشة الأولى بس أصغر: بتطلع من ورا خط الأفق */
-  .dawn-sun{position:absolute;left:0;right:0;bottom:0;height:100%;overflow:hidden}
-  .dawn-sun::before{
-    content:"";position:absolute;left:50%;bottom:0;
-    width:clamp(130px,14vw,210px);aspect-ratio:1;border-radius:50%;
-    background:radial-gradient(circle at 50% 35%, #EEFF9E 0%, var(--lime) 45%, #B4DC25 100%);
-    box-shadow:0 0 40px 6px rgba(200,240,60,.5), 0 0 110px 28px rgba(200,240,60,.18);
-    transform:translate(-50%,100%);
-    transition:transform 1.8s cubic-bezier(.2,.8,.2,1) .35s, box-shadow .5s, filter .5s;
-  }
-  .dawn.in .dawn-sun::before{transform:translate(-50%,50%)}
-  .dawn.glow .dawn-sun::before{box-shadow:0 0 70px 16px rgba(200,240,60,.75), 0 0 180px 50px rgba(200,240,60,.3);filter:brightness(1.1)}
-  .dawn-line{
-    position:absolute;left:0;right:0;bottom:0;height:2px;
-    background:linear-gradient(90deg,transparent 0%,rgba(200,240,60,.25) 15%,rgba(200,240,60,.9) 38%,#F4FFC4 50%,rgba(200,240,60,.9) 62%,rgba(200,240,60,.25) 85%,transparent 100%);
-    box-shadow:0 0 14px rgba(200,240,60,.5);
-    transform:scaleX(0);transition:transform 1.4s cubic-bezier(.2,.8,.2,1) .15s;
-  }
-  .dawn.in .dawn-line{transform:scaleX(1)}
-  .dawn-reflect{
-    position:absolute;left:50%;top:100%;height:clamp(34px,4vw,56px);
-    width:clamp(150px,16vw,240px);transform:translateX(-50%);
-    background:repeating-linear-gradient(to bottom, rgba(200,240,60,.38) 0 2px, transparent 2px 7px);
-    -webkit-mask:linear-gradient(to bottom,#000,transparent 90%);
-            mask:linear-gradient(to bottom,#000,transparent 90%);
-    opacity:0;transition:opacity 1.4s ease 1.4s;
-  }
-  .dawn.in .dawn-reflect{opacity:1}
-  .dawn h2{position:relative;margin-top:clamp(40px,4.6vw,64px);font-size:clamp(28px,4.6vw,56px);font-weight:900;line-height:1.3}
-  .dawn h2 b{color:var(--black);background:var(--lime);padding:0 14px;border-radius:12px;display:inline-block;transform:rotate(-1.5deg)}
-  .dawn.glow .dawn-glow{filter:brightness(1.9)}
-  .dawn p{color:var(--muted);font-size:clamp(15px,1.3vw,18px);margin-top:8px}
-  .screen2 .cards .card{opacity:0;transform:translateY(50px);animation:none;transition:opacity .9s ease, transform 1s cubic-bezier(.2,.8,.2,1), border-color .35s, box-shadow .45s}
-  .screen2 .cards.in .card{opacity:1;transform:none}
-  .screen2 .cards.in .card:nth-child(2){transition-delay:.15s}
-  .screen2 .cards.in .card:nth-child(3){transition-delay:.3s}
-  .screen2 .cards.in .card:hover{transform:translateY(-8px);transition-delay:0s}
-
-  /* ---------- الشاشة التالتة ---------- */
-  .screen3{display:flex;flex-direction:column;justify-content:center;padding:70px 0 0}
-  .screen3 .build{margin:0}
-  @keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
-
-  /* ---------- cards ---------- */
-  .section{max-width:none;margin:0 auto;padding:0 clamp(16px,1.8vw,36px)}
-  .section-head{display:none}
-  .section-head h2{font-size:clamp(24px,3vw,32px);font-weight:900}
-  .section-head p{color:var(--muted);font-size:15px}
-
-  .cards{
-    display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,1.6vw,28px);
-    position:relative;z-index:3;
-  }
-  .card{
-    position:relative;
-    display:flex;flex-direction:column;
-    background:linear-gradient(180deg,#171717 0%, #101010 100%);
-    border:1px solid var(--line);
-    border-radius:26px;
-    padding:clamp(20px,1.6vw,30px);
-    overflow:hidden;
-    transition:transform .45s cubic-bezier(.2,.8,.2,1), border-color .35s, box-shadow .45s;
-    opacity:0;animation:up .9s ease forwards;
-  }
-  .card:nth-child(1){animation-delay:1.3s}
-  .card:nth-child(2){animation-delay:1.45s}
-  .card:nth-child(3){animation-delay:1.6s}
-  .card::before{
-    content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-    background:radial-gradient(420px circle at var(--mx,50%) var(--my,0%), rgba(200,240,60,.13), transparent 45%);
-    opacity:0;transition:opacity .35s;
-  }
-  .card:hover{transform:translateY(-8px);border-color:rgba(200,240,60,.45);box-shadow:0 30px 60px -30px rgba(200,240,60,.35)}
-  .card:hover::before{opacity:1}
-
-  .card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-  .num{font-size:14px;font-weight:900;color:var(--lime);letter-spacing:1px}
-  .tag{font-size:11px;font-weight:700;color:var(--muted);border:1px solid var(--line);padding:3px 10px;border-radius:999px}
-
-  .scene{
-    height:clamp(180px,13vw,250px);border-radius:18px;
-    background:#0C0C0C;
-    border:1px solid var(--line);
-    position:relative;overflow:hidden;
-    margin-bottom:20px;
-  }
-  .card h3{font-size:clamp(22px,1.7vw,30px);font-weight:900;line-height:1.3}
-  .card .sub{color:var(--lime);font-size:13px;font-weight:700;margin-top:2px}
-  .card p{color:var(--muted);font-size:clamp(14.5px,1vw,17px);line-height:1.85;margin-top:10px;flex:1}
-  .go{
-    margin-top:20px;
-    display:flex;align-items:center;justify-content:space-between;
-    background:var(--off);color:var(--black);
-    font-weight:800;font-size:15px;
-    padding:12px 18px;border-radius:14px;
-    transition:.3s;
-  }
-  .go svg{transition:transform .3s}
-  .card:hover .go{background:var(--lime)}
-  .card:hover .go svg{transform:translateX(-5px)}
-
-  /* scene 1 — website */
-  .browser{position:absolute;inset:16px 16px -10px;background:#161616;border:1px solid var(--line);border-radius:12px;overflow:hidden}
-  .browser-bar{display:flex;gap:5px;padding:8px 10px;border-bottom:1px solid var(--line);direction:ltr}
-  .browser-bar i{width:7px;height:7px;border-radius:50%;background:rgba(242,240,234,.2)}
-  .browser-bar i:first-child{background:var(--lime)}
-  .browser-bar span{margin-left:8px;height:7px;flex:1;max-width:120px;border-radius:4px;background:rgba(242,240,234,.08)}
-  .b-hero{margin:10px;height:58px;border-radius:8px;background:linear-gradient(120deg,rgba(200,240,60,.85),rgba(200,240,60,.25));position:relative;overflow:hidden}
-  .b-hero::after{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:0;height:0;border-left:13px solid var(--black);border-top:8px solid transparent;border-bottom:8px solid transparent;margin-left:3px}
-  .b-hero::before{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;background:rgba(242,240,234,.9)}
-  .b-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 10px}
-  .b-grid i{height:34px;border-radius:6px;background:rgba(242,240,234,.07);animation:shimmer 2.4s ease-in-out infinite}
-  .b-grid i:nth-child(2){animation-delay:.3s}.b-grid i:nth-child(3){animation-delay:.6s}
-  @keyframes shimmer{50%{background:rgba(200,240,60,.18)}}
-
-  /* scene 2 — auto reply */
-  .chat{position:absolute;inset:14px;display:flex;flex-direction:column;gap:8px;justify-content:flex-end}
-  .bub{max-width:72%;padding:8px 12px;border-radius:14px;font-size:12px;font-weight:600;line-height:1.5;opacity:0;transform:translateY(8px)}
-  .bub.in{align-self:flex-start;background:#222;border-bottom-right-radius:4px;color:var(--off)}
-  .bub.out{align-self:flex-end;background:var(--lime);color:var(--black);border-bottom-left-radius:4px}
-  .card.play .bub{animation:pop .5s ease forwards}
-  .card.play .bub:nth-child(1){animation-delay:.2s}
-  .card.play .bub:nth-child(2){animation-delay:1.1s}
-  .card.play .bub:nth-child(3){animation-delay:2s}
-  .typing{align-self:flex-end;display:flex;gap:3px;padding:9px 12px;background:rgba(200,240,60,.18);border-radius:14px;opacity:0}
-  .card.play .typing{animation:pop .4s ease 2.8s forwards}
-  .typing i{width:5px;height:5px;border-radius:50%;background:var(--lime);animation:dot 1s infinite}
-  .typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
-  @keyframes pop{to{opacity:1;transform:none}}
-  @keyframes dot{50%{transform:translateY(-3px);opacity:.4}}
-  .badge-ai{position:absolute;top:12px;left:12px;font-size:10px;font-weight:800;direction:ltr;color:var(--lime);border:1px solid rgba(200,240,60,.35);padding:2px 8px;border-radius:999px}
-
-  /* scene 3 — management */
-  .dash{position:absolute;inset:14px;display:grid;grid-template-columns:1.3fr 1fr;gap:10px}
-  .panel{background:#161616;border:1px solid var(--line);border-radius:10px;padding:10px;position:relative}
-  .panel small{font-size:10px;color:var(--muted);font-weight:700}
-  .bars{position:absolute;inset:auto 10px 10px 10px;height:92px;display:flex;align-items:flex-end;gap:6px}
-  .bars i{flex:1;border-radius:4px 4px 2px 2px;background:rgba(242,240,234,.12);height:20%;transition:height 1.1s cubic-bezier(.2,.8,.2,1)}
-  .bars i.hi{background:var(--lime)}
-  .card.play .bars i:nth-child(1){height:38%}
-  .card.play .bars i:nth-child(2){height:62%}
-  .card.play .bars i:nth-child(3){height:48%}
-  .card.play .bars i:nth-child(4){height:80%}
-  .card.play .bars i:nth-child(5){height:66%}
-  .card.play .bars i:nth-child(6){height:95%}
-  .stack{display:flex;flex-direction:column;gap:10px}
-  .stack .panel{flex:1}
-  .big{font-size:20px;font-weight:900;color:var(--off);direction:ltr;text-align:right;margin-top:2px}
-  .big em{font-style:normal;color:var(--lime)}
-  .avatars{display:flex;margin-top:8px;direction:ltr;justify-content:flex-end}
-  .avatars i{width:22px;height:22px;border-radius:50%;border:2px solid #161616;margin-left:-7px;background:#333}
-  .avatars i:nth-child(1){background:var(--lime)}
-  .avatars i:nth-child(2){background:#8a8a8a}
-  .avatars i:nth-child(3){background:#F2F0EA}
-  .avatars i:nth-child(4){background:#3b3b3b;display:grid;place-items:center;font-size:9px;font-style:normal;color:var(--off);font-weight:800}
-
-  /* ---------- build service ---------- */
-  .build{
-    margin:90px auto 0;
-    position:relative;
-    border-radius:32px;
-    background:var(--lime);
-    color:var(--black);
-    padding:clamp(28px,5vw,56px);
-    overflow:hidden;
-    display:grid;grid-template-columns:1.2fr 1fr;gap:30px;align-items:center;
-  }
-  .build::after{
-    content:"";position:absolute;left:-120px;bottom:-220px;width:460px;height:460px;border-radius:50%;
-    border:60px solid rgba(10,10,10,.06);
-  }
-  .build .kicker{font-size:13px;font-weight:800;letter-spacing:.5px;opacity:.7}
-  .build h2{font-size:clamp(26px,3.6vw,46px);font-weight:900;line-height:1.6;margin-top:6px;white-space:nowrap}
-  .build p{font-size:16px;line-height:1.9;margin-top:12px;max-width:520px;font-weight:600;opacity:.85}
-  .chips{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:10px;position:relative;z-index:1}
-  .chip{
-    position:relative;cursor:pointer;
-    display:flex;align-items:center;gap:10px;
-    background:var(--black);color:var(--off);
-    padding:12px 16px;border-radius:16px;
-    font-weight:700;font-size:15px;
-    white-space:nowrap;min-height:54px;
-    transition:transform .25s, box-shadow .25s;
-  }
-  .chip.on{transform:translateY(-3px);box-shadow:0 0 0 2px var(--black), 0 10px 20px -10px rgba(0,0,0,.6)}
-  .chip .wa{margin-inline-start:auto;opacity:.35;transition:opacity .25s, transform .25s}
-  .chip:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 14px 28px -12px rgba(0,0,0,.7)}
-  .chip:hover .wa{opacity:1;transform:translateX(-4px)}
-  .chip:active{transform:scale(.97)}
-  .chips-note{grid-column:1/-1;font-size:13px;font-weight:700;opacity:.7;margin-top:2px}
-  .rotator{
-    display:inline-block;position:relative;
-    background:var(--black);color:var(--off);
-    padding:.12em .4em .22em;border-radius:16px;
-    line-height:1.45;white-space:nowrap;vertical-align:middle;
-    transition:opacity .3s, transform .3s;
-  }
-  .rotator.out{opacity:0;transform:translateY(10px)}
-  .chip svg{flex:none}
-  .build-cta{
-    margin-top:24px;display:inline-flex;align-items:center;gap:10px;
-    background:var(--black);color:var(--lime);
-    padding:14px 22px;border-radius:16px;font-weight:800;font-size:16px;
-    transition:transform .25s;
-  }
-  .build-cta:hover{transform:translateY(-3px)}
-
-  /* ---------- footer ---------- */
-  footer{
-    max-width:none;margin:50px auto 0;padding:30px clamp(16px,1.8vw,36px) 40px;
-    border-top:1px solid var(--line);
-    display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;
-    color:var(--muted);font-size:14px;
-  }
-  footer .links{display:flex;gap:18px;flex-wrap:wrap}
-  footer a:hover{color:var(--lime)}
-  footer .ltr{direction:ltr;display:inline-block}
-
-
-  /* الشاشة التانية لازم تفوت كلها بطول الشاشة عالكمبيوتر */
-  @media (min-width:961px){
-    .screen2{height:100vh;height:100svh;min-height:0;padding:clamp(16px,3.2vh,56px) 0 clamp(14px,2.6vh,40px);overflow:hidden}
-    .screen2 .dawn{margin-bottom:clamp(14px,3vh,48px)}
-    .screen2 .dawn-art{height:clamp(70px,13vh,200px)}
-    .screen2 .dawn h2{margin-top:clamp(18px,3.6vh,60px);font-size:clamp(26px,min(4.6vw,6.2vh),56px);line-height:1.25}
-    .screen2 .dawn p{margin-top:4px;font-size:clamp(13px,min(1.3vw,1.9vh),18px)}
-    .screen2 .card{padding:clamp(14px,min(1.6vw,2.6vh),30px)}
-    .screen2 .card-top{margin-bottom:clamp(8px,1.6vh,16px)}
-    .screen2 .scene{height:clamp(96px,21vh,250px);margin-bottom:clamp(10px,2vh,20px)}
-    .screen2 .card h3{font-size:clamp(19px,min(1.7vw,3.1vh),30px)}
-    .screen2 .card p{font-size:clamp(13px,min(1vw,1.75vh),17px);line-height:1.7;margin-top:clamp(4px,1vh,10px);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  }
-
-  @media (max-width:960px){
-    .cards{grid-template-columns:1fr;max-width:520px;margin:0 auto}
-    .build{grid-template-columns:1fr}
-    .screen2{padding-top:70px}
-  }
-  @media (max-width:480px){.chip{font-size:13px;padding:10px 12px;gap:8px}.chip svg{width:18px;height:18px}}
-  @media (max-width:640px){.chips{grid-template-columns:1fr;grid-auto-rows:auto}.chip{white-space:normal}.build h2{font-size:clamp(17px,5.6vw,26px)}}
-  @media (prefers-reduced-motion:reduce){
-    *,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;transition:none!important}
-  }
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css?v=6">
 </head>
 <body>
 
-<!-- ============ روابط المنصات — عدّلها من هون ============ -->
-<!--
-  موقع شفق:            /site/
-  شفق بوت:             https://bot.shafqmedia.com/
-  نظام الفريق والعملاء: /shafq-app/
-  واتساب:              https://wa.me/966563079286
--->
-
-<header class="top">
-  <a class="brand" href="#"><img class="brand-logo" src="data:image/png;base64,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" alt="شفق ميديا"></a>
-  <a class="top-cta" href="https://wa.me/966563079286" target="_blank" rel="noopener">تواصل معنا</a>
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="lg" href="#top" aria-label="شفق ميديا، العودة للأعلى"><img src="assets/logo-white.png" alt="شعار شفق ميديا" width="213" height="437"></a>
+    <nav class="links" aria-label="القائمة الرئيسية">
+      <a href="#services">الخدمات</a>
+      <a href="#work" data-work-link hidden>أعمالنا</a>
+      <a href="#process">كيف نعمل</a>
+      <a href="#pricing">الأسعار</a>
+      <a href="#bot">شفق بوت</a>
+      <a href="#contact">تواصل معنا</a>
+    </nav>
+    <a class="btn btn-p cta-n" href="request/index.html">ابدأ مشروعك</a>
+    <button class="burger" id="burger" aria-label="فتح القائمة" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
 </header>
+<div class="mmenu" id="mmenu">
+  <a href="#services">الخدمات</a>
+  <a href="#work" data-work-link hidden>أعمالنا</a>
+  <a href="#process">كيف نعمل</a>
+  <a href="#pricing">الأسعار</a>
+  <a href="#bot">شفق بوت</a>
+  <a href="#contact">تواصل معنا</a>
+  <a class="btn btn-p" href="request/index.html">ابدأ مشروعك</a>
+</div>
 
-<section class="screen hero" id="top">
-  <div class="sky">
-    <div class="halo"></div>
-    <div class="rays"></div>
-    <div class="sun-wrap"><div class="sun-core"></div></div>
-    <div class="horizon"></div>
-    <div class="reflect"></div>
+<main id="top">
+
+<section class="hero">
+  <div class="wrap">
+    <img class="lgo rv" src="assets/logo-white.png" alt="شعار شفق ميديا" width="213" height="437">
+    <h1 class="rv">كل يوم شفق جديد لعلامتك</h1>
+    <p class="rv">وكالة تسويق ومحتوى من دمشق. ندير حساباتك، ونصوّر مشاريعك وفعالياتك، ونبني لك خطة محتوى تحقق النتيجة.</p>
+    <div class="cta rv">
+      <a class="btn btn-p" href="request/index.html">اطلب خدمتك</a>
+      <a class="btn btn-o" href="#services" data-alt-work>شاهد خدماتنا</a>
+    </div>
   </div>
-  <div class="hero-inner">
-    <span class="eyebrow"><i></i>منصات شفق ميديا</span>
-    <h1 class="wordmark">شفق<span>.</span></h1>
-    <div class="latin">SHAFQ MEDIA</div>
-    <div class="slogan">كل يوم <b class="sn" id="shafqNew"><span>شفق</span> <span>جديد</span></b> لعلامتك</div>
-  </div>
-  <a class="cue" href="#platforms" aria-label="انزل"><i></i>انزل</a>
 </section>
 
-<main>
-<section class="screen screen2 section" id="platforms">
-  <div class="dawn" data-reveal>
-    <div class="dawn-art"><div class="dawn-glow"></div><div class="dawn-sun"></div><div class="dawn-line"></div><div class="dawn-reflect"></div></div>
-    <h2>كل يوم <b class="sn"><span>شفق</span> <span>جديد</span></b> لصفحتك</h2>
-    <p>تلات منصات، هوية وحدة. اختار وجهتك</p>
+<section class="about" id="about">
+  <div class="wrap">
+    <div class="grid">
+      <div class="rv">
+        <div class="eyebrow">من نحن</div>
+        <h2>شريكك في المحتوى</h2>
+        <p class="body">شفق ميديا وكالة تسويق عبر وسائل التواصل الاجتماعي من دمشق. نعمل مع المطاعم والعيادات والمتاجر والشركات وأصحاب العلامات الشخصية، ونبني لكل عميل خطة محتوى واضحة بدلاً من منشورات متفرقة.</p>
+      </div>
+      <div class="stats rv">
+        <div class="card hov"><b>+5</b><span>مشاريع منفّذة</span></div>
+        <div class="card hov"><b>+5</b><span>عملاء يثقون بنا</span></div>
+        <div class="card hov"><b>2026</b><span>انطلقنا في أيار</span></div>
+      </div>
+    </div>
+    <div class="vm">
+      <div class="card hov rv"><div class="k">الرؤية</div><div class="v">أن نكون أول اسم يخطر ببالك عندما تريد أن تُعرف وتكبر.</div></div>
+      <div class="card hov rv"><div class="k">الرسالة</div><div class="v">نحوّل أهدافك إلى محتوى مدروس يصل إلى الناس الصحيحين، ويحقق النتيجة التي تطمح إليها.</div></div>
+    </div>
   </div>
-  <div class="section-head">
-    <h2>اختر وجهتك</h2>
-    <p>تلات منصات، هوية وحدة</p>
-  </div>
+</section>
 
-  <div class="cards" id="cards">
-    <!-- 01 الموقع -->
-    <a class="card" href="/site/" >
-      <div class="card-top"><span class="num">٠١</span><span class="tag">الموقع</span></div>
-      <div class="scene">
-        <div class="browser">
-          <div class="browser-bar"><i></i><i></i><i></i><span></span></div>
-          <div class="b-hero"></div>
-          <div class="b-grid"><i></i><i></i><i></i></div>
+<section id="services">
+  <div class="wrap">
+    <div class="head c rv"><div class="eyebrow">الخدمات</div><h2>خدماتنا</h2><p class="lead">كل ما تحتاجه علامتك في مكان واحد.</p></div>
+    <div class="svc" id="svc"></div>
+  </div>
+</section>
+
+<section id="work" hidden>
+  <div class="wrap">
+    <div class="head rv"><div class="eyebrow">أعمالنا</div><h2>أعمالنا</h2><p class="lead">نماذج من مشاريع نفّذناها لعملائنا.</p></div>
+    <div class="filters rv" id="filters"></div>
+    <div class="wgrid" id="wgrid"></div>
+  </div>
+</section>
+
+<section id="clients">
+  <div class="wrap">
+    <div class="head c rv"><div class="eyebrow">من نخدم</div><h2>نعمل مع</h2><p class="lead">أياً كان مجالك، نبني لك المحتوى المناسب لجمهورك.</p></div>
+    <div class="aud rv">
+      <span class="hov"><i class="kf">الشركات والمؤسسات</i></span><span class="hov"><i class="kf">المؤتمرات والمعارض</i></span><span class="hov"><i class="kf">المتاجر والعلامات التجارية</i></span><span class="hov"><i class="kf">المطاعم والمقاهي</i></span>
+      <span class="hov"><i class="kf">العيادات والصيدليات</i></span><span class="hov"><i class="kf">العلامات الشخصية</i></span><span class="hov"><i class="kf">العقارات والإنشاءات</i></span><span class="hov"><i class="kf">المدارس والجامعات</i></span>
+    </div>
+  </div>
+</section>
+
+<section id="process">
+  <div class="wrap">
+    <div class="head c rv"><div class="eyebrow">كيف نعمل</div><h2>كيف نعمل</h2><p class="lead">أربع خطوات واضحة، ونطوّر النتائج كل شهر.</p></div>
+    <div class="steps">
+      <div class="card hov rv"><div class="no">01</div><div class="t">نسمع أفكارك</div><div class="d"><i class="kf" data-kf="steps">نفهم مشروعك وأهدافك.</i></div></div>
+      <div class="card hov rv"><div class="no">02</div><div class="t">نخطط محتواك</div><div class="d"><i class="kf" data-kf="steps">خطة شهرية توافق عليها.</i></div></div>
+      <div class="card hov rv"><div class="no">03</div><div class="t">نصوّر وننشر</div><div class="d"><i class="kf" data-kf="steps">تصوير احترافي ونشر منتظم.</i></div></div>
+      <div class="card hov rv"><div class="no">04</div><div class="t">نطوّر خطتك</div><div class="d"><i class="kf" data-kf="steps">تقرير شهري وتحسين مستمر.</i></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="rules">
+  <div class="wrap">
+    <div class="head c rv"><div class="eyebrow">مبادئنا</div><h2>قواعدنا الخمس</h2><p class="lead">لا نتنازل عنها في أي مشروع.</p></div>
+    <div class="rules">
+      <div class="card hov rv"><div class="no">01</div><div class="t"><i class="kf" data-kf="rules">محتوى نظيف</i></div><div class="d"><i class="kf" data-kf="rulesd">نلتزم بالضوابط الدينية والأخلاقية في كل ما ننتجه.</i></div></div>
+      <div class="card hov rv"><div class="no">02</div><div class="t"><i class="kf" data-kf="rules">الخطة قبل الكاميرا</i></div><div class="d"><i class="kf" data-kf="rulesd">لا نصوّر قبل أن نعرف الهدف ونفهم الجمهور.</i></div></div>
+      <div class="card hov rv"><div class="no">03</div><div class="t"><i class="kf" data-kf="rules">مراجعة الأرقام</i></div><div class="d"><i class="kf" data-kf="rulesd">نراجع النتائج كل شهر ونطوّر الخطة على أساسها.</i></div></div>
+      <div class="card hov rv"><div class="no">04</div><div class="t"><i class="kf" data-kf="rules">سرعة في التسليم</i></div><div class="d"><i class="kf" data-kf="rulesd">نسلّم في الموعد، ومحتوى الفعاليات خلال أيام.</i></div></div>
+      <div class="card hov rv"><div class="no">05</div><div class="t"><i class="kf" data-kf="rules">قريبون منك</i></div><div class="d"><i class="kf" data-kf="rulesd">نفهم عملك ولغة جمهورك قبل أن نتحدث عنه.</i></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="head c rv"><div class="eyebrow">الأسعار</div><h2>الباقات</h2><p class="lead">اختر الباقة المناسبة، وكلما طالت المدة زاد الخصم.</p></div>
+    <div style="text-align:center" class="rv"><div class="toggle" id="toggle" role="tablist" aria-label="مدة الاشتراك"></div></div>
+    <div class="plans" id="plans"></div>
+    <p class="pnote">الأسعار بالدولار أو ما يعادلها بالليرة السورية حسب سعر الصرف، ولا تشمل ميزانية الإعلانات الممولة. <span id="ratenote"></span> <a href="request/index.html?s=custom">تحتاج عرضاً مخصصاً لمشروعك؟ اطلبه من هنا</a></p>
+  </div>
+</section>
+
+<section class="botstrip" id="bot">
+  <div class="wrap">
+    <a class="card hov rv" href="https://bot.shafqmedia.com/">
+      <div><div class="k">شفق بوت</div><div class="t">ردود تلقائية على رسائل وتعليقات صفحتك على مدار الساعة.</div><div class="d">إنستغرام وفيسبوك ماسنجر، دون أن يفوتك أي عميل.</div></div>
+      <span class="btn btn-p">جرّبه مجاناً 7 أيام</span>
+    </a>
+  </div>
+</section>
+
+<section id="digital">
+  <div class="wrap">
+    <div class="head rv"><div class="eyebrow">الحلول الرقمية</div><h2>الحلول الرقمية</h2><p class="lead">نبني لك الأدوات التي تدير بها عملك.</p></div>
+    <div class="dg">
+      <a class="card hov rv" href="request/index.html?s=website"><div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 8h18M8 21h8"/></svg></div><div class="t">مواقع إلكترونية</div><div class="d">موقع سريع يعرّف بعملك.</div></a>
+      <a class="card hov rv" href="request/index.html?s=app"><div class="ico"><svg viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></svg></div><div class="t">تطبيقات جوال</div><div class="d">تطبيق باسمك على الهاتف.</div></a>
+      <a class="card hov rv" href="request/index.html?s=system"><div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div><div class="t">أنظمة إدارة</div><div class="d">فريقك وحساباتك في مكان واحد.</div></a>
+      <a class="card hov rv" href="request/index.html?s=bot"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg></div><div class="t">بوتات ردود</div><div class="d">ردود تلقائية على مدار الساعة.</div></a>
+    </div>
+    <div class="card demo rv">
+      <div>
+        <div class="k">مثال حي</div>
+        <h3>نظام شفق</h3>
+        <p>بنينا هذا النظام لإدارة فريقنا وعملائنا وحساباتنا. جرّبه بنفسك كمدير أو عضو فريق أو عميل، ثم اطلب نظاماً مثله لعملك.</p>
+        <div class="cta">
+          <a class="btn btn-p" href="demo/index.html">جرّب النظام بنفسك</a>
+          <a class="btn btn-o" href="request/index.html?s=system">اطلب نظاماً مثله</a>
         </div>
       </div>
-      <h3>موقع شفق</h3>
-      <div class="sub">أعمالنا · خدماتنا · عروضنا</div>
-      <p>شوف أعمالنا وقصص عملائنا، وتعرّف على خدماتنا، واختار العرض والعقد اللي بناسب مشروعك.</p>
-      <span class="go">ادخل الموقع
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
-      </span>
-    </a>
-
-    <!-- 02 الرد التلقائي -->
-    <a class="card" href="https://bot.shafqmedia.com/" target="_blank" rel="noopener">
-      <div class="card-top"><span class="num">٠٢</span><span class="tag">شفق بوت</span></div>
-      <div class="scene">
-        <span class="badge-ai">24/7 · AI</span>
-        <div class="chat">
-          <div class="bub in">السلام عليكم، كم سعر الباقة؟ 👋</div>
-          <div class="bub out">وعليكم السلام! بعتنالك التفاصيل عالخاص ✨</div>
-          <div class="bub in">والله سريعين 😍</div>
-          <div class="typing"><i></i><i></i><i></i></div>
-        </div>
-      </div>
-      <h3>الرد التلقائي</h3>
-      <div class="sub">إنستغرام · فيسبوك · ماسنجر</div>
-      <p>ردود فورية على الرسائل والتعليقات طول اليوم، وما رح يفوتك ولا زبون.</p>
-      <span class="go">افتح شفق بوت
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
-      </span>
-    </a>
-
-    <!-- 03 نظام الإدارة -->
-    <a class="card" href="/shafq-app/" >
-      <div class="card-top"><span class="num">٠٣</span><span class="tag">نظام شفق</span></div>
-      <div class="scene">
-        <div class="dash">
-          <div class="panel">
-            <small>الدخل الشهري</small>
-            <div class="bars"><i></i><i></i><i></i><i></i><i></i><i class="hi"></i></div>
-          </div>
-          <div class="stack">
-            <div class="panel"><small>العملاء</small><div class="big"><em>+</em>12</div></div>
-            <div class="panel"><small>الفريق</small>
-              <div class="avatars"><i></i><i></i><i></i><i>+5</i></div>
+      <div class="mock" aria-hidden="true">
+        <div class="bar"><i></i><i></i><i></i></div>
+        <div class="body">
+          <div class="side"><span class="on"></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div>
+            <div class="tiles">
+              <div class="tile l"><small>دخل الشهر</small><b>$10,400</b></div>
+              <div class="tile"><small>المصاريف</small><b>$3,150</b></div>
+              <div class="tile"><small>منشورات اليوم</small><b>4</b></div>
             </div>
+            <div class="rows"><div></div><div></div><div></div><div></div></div>
           </div>
         </div>
       </div>
-      <h3>إدارة الفريق والعملاء</h3>
-      <div class="sub">المالية · العملاء · الفريق · المعدات</div>
-      <p>كل شغلك بمكان واحد: الحسابات والعملاء والفريق والمعدات والدرون، من الكمبيوتر أو الموبايل.</p>
-      <span class="go">ادخل النظام
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
-      </span>
-    </a>
+    </div>
   </div>
-
 </section>
 
-<!-- الشاشة التالتة: خدمات شفق -->
-<section class="screen screen3 section" id="services">
-  <section class="build" data-reveal>
-    <div style="position:relative;z-index:1">
-      <div class="kicker">شو في عنّا؟ · خدمات شفق ميديا</div>
-      <h2>بدك <span class="rotator" id="rot">تصوير درون</span>؟</h2>
-      <p>من تصوير الدرون والأفلام، لإدارة صفحاتك وتغطية فعالياتك، لبناء موقعك وتطبيقك ونظام شغلك. شفق معك بكل خطوة.</p>
-      <a class="build-cta" href="https://wa.me/966563079286?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A8%D8%AF%D9%8A%20%D8%A3%D8%B3%D8%AA%D9%81%D8%B3%D8%B1%20%D8%B9%D9%86%20%D8%AE%D8%AF%D9%85%D8%A7%D8%AA%D9%83%D9%85" target="_blank" rel="noopener">
-        اطلب خدمتك على واتساب
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
-      </a>
+<section class="contact" id="contact">
+  <div class="wrap">
+    <div class="grid">
+      <div class="rv">
+        <div class="eyebrow">تواصل معنا</div>
+        <h2>لديك مشروع؟<br><span>لنبدأ معاً.</span></h2>
+        <p class="lead">أرسل لنا فكرتك، ونعود إليك بخطة واضحة.</p>
+        <div class="ways">
+          <a class="card hov" data-wa="مرحباً شفق ميديا."><span class="ico"><svg viewBox="0 0 24 24"><path d="M20.5 11.6A8.5 8.5 0 0 1 8 19.1L3.5 20.5l1.4-4.3A8.5 8.5 0 1 1 20.5 11.6z"/><path d="M9 8.5c0 3.5 3 6.5 6.5 6.5"/></svg></span><span><b>راسلنا على واتساب</b><small>نرد عادة خلال ساعات العمل</small></span></a>
+          <a class="card hov" href="https://www.instagram.com/shafq.media" target="_blank" rel="noopener"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></svg></span><span><b>إنستغرام</b><small>@shafq.media</small></span></a>
+          <a class="card hov" href="mailto:shafqmedia@gmail.com"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span><span><b>البريد الإلكتروني</b><small>shafqmedia@gmail.com</small></span></a>
+        </div>
+      </div>
+      <form class="card rv" id="cform" novalidate>
+        <div class="f"><label for="cname">الاسم أو اسم الشركة</label><input id="cname" name="name" autocomplete="name" maxlength="80" required></div>
+        <div class="f"><label for="cphone">رقم الواتساب</label><input id="cphone" name="phone" type="tel" dir="ltr" autocomplete="tel" maxlength="20" placeholder="09xxxxxxxx"></div>
+        <div class="f"><label>الخدمة</label>
+          <div class="types" id="ctypes">
+            <button type="button" data-s="social">إدارة الحسابات</button><button type="button" data-s="video">إنتاج فيديو</button><button type="button" data-s="aerial">تصوير جوي</button><button type="button" data-s="events">مؤتمر أو معرض</button><button type="button" data-s="wedding">عرس أو مناسبة</button><button type="button" data-s="website">موقع أو نظام</button><button type="button" data-s="other">أخرى</button>
+          </div>
+        </div>
+        <div class="f"><label for="cmsg">رسالتك</label><textarea id="cmsg" name="msg" maxlength="1000" placeholder="أخبرنا باختصار عن مشروعك"></textarea></div>
+        <input class="hp" type="text" id="chw" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="err" id="cerr" role="alert"></div>
+        <button class="btn btn-p" type="submit" id="csend">إرسال</button>
+        <p class="mut" style="font-size:13.5px;margin-top:10px;color:var(--mut)">للتفاصيل الكاملة استخدم <a href="request/index.html" style="color:var(--lime);font-weight:700">صفحة طلب الخدمة</a>.</p>
+      </form>
     </div>
-    <div class="chips">
-      <a class="chip" data-i="0" href="https://wa.me/966563079286?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%20%D9%88%D8%B1%D8%AD%D9%85%D8%A9%20%D8%A7%D9%84%D9%84%D9%87%20%F0%9F%8C%85%0A%D8%A7%D9%84%D9%84%D9%87%20%D9%8A%D8%B9%D8%B7%D9%8A%D9%83%D9%85%20%D8%A7%D9%84%D8%B9%D8%A7%D9%81%D9%8A%D8%A9%20%D8%B4%D9%81%D9%82%20%D9%85%D9%8A%D8%AF%D9%8A%D8%A7%0A%D8%A8%D8%AF%D9%8A%20%D8%AA%D8%B5%D9%88%D9%8A%D8%B1%20%D8%AF%D8%B1%D9%88%D9%86%20%28%D8%AA%D8%B5%D9%88%D9%8A%D8%B1%20%D8%AC%D9%88%D9%8A%29.%0A%D9%85%D9%85%D9%83%D9%86%20%D8%AA%D8%A8%D8%B9%D8%AA%D9%88%D9%84%D9%8A%20%D8%A7%D9%84%D8%AA%D9%81%D8%A7%D8%B5%D9%8A%D9%84%20%D9%88%D8%A7%D9%84%D8%A3%D8%B3%D8%B9%D8%A7%D8%B1%D8%9F%0A%D9%88%D8%B4%D9%83%D8%B1%D8%A7%D9%8B%20%D8%A5%D9%84%D9%83%D9%85%20%F0%9F%99%8F" target="_blank" rel="noopener" title="اطلب تصوير درون على واتساب">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8F03C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="10" width="6" height="4" rx="1"/><path d="M9 11L5 7M15 11l4-4M9 13l-4 4M15 13l4 4"/><circle cx="5" cy="7" r="2"/><circle cx="19" cy="7" r="2"/><circle cx="5" cy="17" r="2"/><circle cx="19" cy="17" r="2"/></svg>
-        تصوير درون<svg class="wa" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
-      </a>
-      <a class="chip" data-i="1" href="https://wa.me/966563079286?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%20%D9%88%D8%B1%D8%AD%D9%85%D8%A9%20%D8%A7%D9%84%D9%84%D9%87%20%F0%9F%8C%85%0A%D8%A7%D9%84%D9%84%D9%87%20%D9%8A%D8%B9%D8%B7%D9%8A%D9%83%D9%85%20%D8%A7%D9%84%D8%B9%D8%A7%D9%81%D9%8A%D8%A9%20%D8%B4%D9%81%D9%82%20%D9%85%D9%8A%D8%AF%D9%8A%D8%A7%0A%D8%A8%D8%AF%D9%8A%20%D8%AA%D8%B5%D9%88%D9%8A%D8%B1%20%D9%81%D9%8A%D9%84%D9%85%20%D8%A3%D9%88%20%D9%81%D9%8A%D8%AF%D9%8A%D9%88%20%D8%A5%D8%B9%D9%84%D8%A7%D9%86%D9%8A.%0A%D9%85%D9%85%D9%83%D9%86%20%D8%AA%D8%A8%D8%B9%D8%AA%D9%88%D9%84%D9%8A%20%D8%A7%D9%84%D8%AA%D9%81%D8%A7%D8%B5%D9%8A%D9%84%20%D9%88%D8%A7%D9%84%D8%A3%D8%B3%D8%B9%D8%A7%D8%B1%D8%9F%0A%D9%88%D8%B4%D9%83%D8%B1%D8%A7%D9%8B%20%D8%A5%D9%84%D9%83%D9%85%20%F0%9F%99%8F" target="_blank" rel="noopener" title="اطلب تصوير وإنتاج أفلام على واتساب">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8F03C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3"/></svg>
-        تصوير وإنتاج أفلام<svg class="wa" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
-      </a>
-      <a class="chip" data-i="2" href="https://wa.me/966563079286?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%20%D9%88%D8%B1%D8%AD%D9%85%D8%A9%20%D8%A7%D9%84%D9%84%D9%87%20%F0%9F%8C%85%0A%D8%A7%D9%84%D9%84%D9%87%20%D9%8A%D8%B9%D8%B7%D9%8A%D9%83%D9%85%20%D8%A7%D9%84%D8%B9%D8%A7%D9%81%D9%8A%D8%A9%20%D8%B4%D9%81%D9%82%20%D9%85%D9%8A%D8%AF%D9%8A%D8%A7%0A%D8%A8%D8%AF%D9%8A%20%D8%A5%D8%AF%D8%A7%D8%B1%D8%A9%20%D8%B5%D9%81%D8%AD%D8%A7%D8%AA%20%D8%A7%D9%84%D8%B3%D9%88%D8%B4%D9%8A%D8%A7%D9%84%20%D9%85%D9%8A%D8%AF%D9%8A%D8%A7%20%D9%84%D9%85%D8%B4%D8%B1%D9%88%D8%B9%D9%8A.%0A%D9%85%D9%85%D9%83%D9%86%20%D8%AA%D8%A8%D8%B9%D8%AA%D9%88%D9%84%D9%8A%20%D8%A7%D9%84%D8%AA%D9%81%D8%A7%D8%B5%D9%8A%D9%84%20%D9%88%D8%A7%D9%84%D8%A3%D8%B3%D8%B9%D8%A7%D8%B1%D8%9F%0A%D9%88%D8%B4%D9%83%D8%B1%D8%A7%D9%8B%20%D8%A5%D9%84%D9%83%D9%85%20%F0%9F%99%8F" target="_blank" rel="noopener" title="اطلب إدارة سوشيال ميديا على واتساب">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8F03C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="#C8F03C"/></svg>
-        إدارة سوشيال ميديا<svg class="wa" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
-      </a>
-      <a class="chip" data-i="3" href="https://wa.me/966563079286?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%20%D9%88%D8%B1%D8%AD%D9%85%D8%A9%20%D8%A7%D9%84%D9%84%D9%87%20%F0%9F%8C%85%0A%D8%A7%D9%84%D9%84%D9%87%20%D9%8A%D8%B9%D8%B7%D9%8A%D9%83%D9%85%20%D8%A7%D9%84%D8%B9%D8%A7%D9%81%D9%8A%D8%A9%20%D8%B4%D9%81%D9%82%20%D9%85%D9%8A%D8%AF%D9%8A%D8%A7%0A%D8%A8%D8%AF%D9%8A%20%D8%AA%D8%BA%D8%B7%D9%8A%D8%A9%20%D9%81%D8%B9%D8%A7%D9%84%D9%8A%D8%A9%20%D8%A3%D9%88%20%D9%85%D8%A4%D8%AA%D9%85%D8%B1.%0A%D9%85%D9%85%D9%83%D9%86%20%D8%AA%D8%A8%D8%B9%D8%AA%D9%88%D9%84%D9%8A%20%D8%A7%D9%84%D8%AA%D9%81%D8%A7%D8%B5%D9%8A%D9%84%20%D9%88%D8%A7%D9%84%D8%A3%D8%B3%D8%B9%D8%A7%D8%B1%D8%9F%0A%D9%88%D8%B4%D9%83%D8%B1%D8%A7%D9%8B%20%D8%A5%D9%84%D9%83%D9%85%20%F0%9F%99%8F" target="_blank" rel="noopener" title="اطلب تغطية فعاليات ومؤتمرات على واتساب">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8F03C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V9l8-6 8 6v12"/><path d="M9 21v-6h6v6"/></svg>
-        تغطية فعاليات ومؤتمرات<svg class="wa" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
-      </a>
-      <a class="chip" data-i="4" href="https://wa.me/966563079286?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%20%D9%88%D8%B1%D8%AD%D9%85%D8%A9%20%D8%A7%D9%84%D9%84%D9%87%20%F0%9F%8C%85%0A%D8%A7%D9%84%D9%84%D9%87%20%D9%8A%D8%B9%D8%B7%D9%8A%D9%83%D9%85%20%D8%A7%D9%84%D8%B9%D8%A7%D9%81%D9%8A%D8%A9%20%D8%B4%D9%81%D9%82%20%D9%85%D9%8A%D8%AF%D9%8A%D8%A7%0A%D8%A8%D8%AF%D9%8A%20%D9%85%D9%88%D9%82%D8%B9%20%D8%A5%D9%84%D9%83%D8%AA%D8%B1%D9%88%D9%86%D9%8A%20%D9%84%D9%85%D8%B4%D8%B1%D9%88%D8%B9%D9%8A.%0A%D9%85%D9%85%D9%83%D9%86%20%D8%AA%D8%A8%D8%B9%D8%AA%D9%88%D9%84%D9%8A%20%D8%A7%D9%84%D8%AA%D9%81%D8%A7%D8%B5%D9%8A%D9%84%20%D9%88%D8%A7%D9%84%D8%A3%D8%B3%D8%B9%D8%A7%D8%B1%D8%9F%0A%D9%88%D8%B4%D9%83%D8%B1%D8%A7%D9%8B%20%D8%A5%D9%84%D9%83%D9%85%20%F0%9F%99%8F" target="_blank" rel="noopener" title="اطلب مواقع إلكترونية على واتساب">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8F03C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 8h18M8 21h8"/></svg>
-        مواقع إلكترونية<svg class="wa" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
-      </a>
-      <a class="chip" data-i="5" href="https://wa.me/966563079286?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%20%D9%88%D8%B1%D8%AD%D9%85%D8%A9%20%D8%A7%D9%84%D9%84%D9%87%20%F0%9F%8C%85%0A%D8%A7%D9%84%D9%84%D9%87%20%D9%8A%D8%B9%D8%B7%D9%8A%D9%83%D9%85%20%D8%A7%D9%84%D8%B9%D8%A7%D9%81%D9%8A%D8%A9%20%D8%B4%D9%81%D9%82%20%D9%85%D9%8A%D8%AF%D9%8A%D8%A7%0A%D8%A8%D8%AF%D9%8A%20%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%20%D9%85%D9%88%D8%A8%D8%A7%D9%8A%D9%84%20%D9%84%D9%85%D8%B4%D8%B1%D9%88%D8%B9%D9%8A.%0A%D9%85%D9%85%D9%83%D9%86%20%D8%AA%D8%A8%D8%B9%D8%AA%D9%88%D9%84%D9%8A%20%D8%A7%D9%84%D8%AA%D9%81%D8%A7%D8%B5%D9%8A%D9%84%20%D9%88%D8%A7%D9%84%D8%A3%D8%B3%D8%B9%D8%A7%D8%B1%D8%9F%0A%D9%88%D8%B4%D9%83%D8%B1%D8%A7%D9%8B%20%D8%A5%D9%84%D9%83%D9%85%20%F0%9F%99%8F" target="_blank" rel="noopener" title="اطلب تطبيقات موبايل على واتساب">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8F03C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></svg>
-        تطبيقات موبايل<svg class="wa" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
-      </a>
-      <a class="chip" data-i="6" href="https://wa.me/966563079286?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%20%D9%88%D8%B1%D8%AD%D9%85%D8%A9%20%D8%A7%D9%84%D9%84%D9%87%20%F0%9F%8C%85%0A%D8%A7%D9%84%D9%84%D9%87%20%D9%8A%D8%B9%D8%B7%D9%8A%D9%83%D9%85%20%D8%A7%D9%84%D8%B9%D8%A7%D9%81%D9%8A%D8%A9%20%D8%B4%D9%81%D9%82%20%D9%85%D9%8A%D8%AF%D9%8A%D8%A7%0A%D8%A8%D8%AF%D9%8A%20%D9%86%D8%B8%D8%A7%D9%85%20%D8%A5%D8%AF%D8%A7%D8%B1%D8%A9%20%D9%84%D8%B4%D8%BA%D9%84%D9%8A%20%28%D8%AD%D8%B3%D8%A7%D8%A8%D8%A7%D8%AA%D8%8C%20%D8%B9%D9%85%D9%84%D8%A7%D8%A1%D8%8C%20%D9%81%D8%B1%D9%8A%D9%82%29.%0A%D9%85%D9%85%D9%83%D9%86%20%D8%AA%D8%A8%D8%B9%D8%AA%D9%88%D9%84%D9%8A%20%D8%A7%D9%84%D8%AA%D9%81%D8%A7%D8%B5%D9%8A%D9%84%20%D9%88%D8%A7%D9%84%D8%A3%D8%B3%D8%B9%D8%A7%D8%B1%D8%9F%0A%D9%88%D8%B4%D9%83%D8%B1%D8%A7%D9%8B%20%D8%A5%D9%84%D9%83%D9%85%20%F0%9F%99%8F" target="_blank" rel="noopener" title="اطلب أنظمة إدارة على واتساب">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8F03C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
-        أنظمة إدارة<svg class="wa" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
-      </a>
-      <a class="chip" data-i="7" href="https://wa.me/966563079286?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%20%D9%88%D8%B1%D8%AD%D9%85%D8%A9%20%D8%A7%D9%84%D9%84%D9%87%20%F0%9F%8C%85%0A%D8%A7%D9%84%D9%84%D9%87%20%D9%8A%D8%B9%D8%B7%D9%8A%D9%83%D9%85%20%D8%A7%D9%84%D8%B9%D8%A7%D9%81%D9%8A%D8%A9%20%D8%B4%D9%81%D9%82%20%D9%85%D9%8A%D8%AF%D9%8A%D8%A7%0A%D8%A8%D8%AF%D9%8A%20%D8%A8%D9%88%D8%AA%20%D8%B1%D8%AF%20%D8%AA%D9%84%D9%82%D8%A7%D8%A6%D9%8A%20%D9%84%D8%B1%D8%B3%D8%A7%D8%A6%D9%84%20%D9%88%D8%AA%D8%B9%D9%84%D9%8A%D9%82%D8%A7%D8%AA%20%D8%B5%D9%81%D8%AD%D8%A7%D8%AA%D9%8A.%0A%D9%85%D9%85%D9%83%D9%86%20%D8%AA%D8%A8%D8%B9%D8%AA%D9%88%D9%84%D9%8A%20%D8%A7%D9%84%D8%AA%D9%81%D8%A7%D8%B5%D9%8A%D9%84%20%D9%88%D8%A7%D9%84%D8%A3%D8%B3%D8%B9%D8%A7%D8%B1%D8%9F%0A%D9%88%D8%B4%D9%83%D8%B1%D8%A7%D9%8B%20%D8%A5%D9%84%D9%83%D9%85%20%F0%9F%99%8F" target="_blank" rel="noopener" title="اطلب بوتات رد تلقائي على واتساب">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8F03C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>
-        بوتات رد تلقائي<svg class="wa" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
-      </a>
-      <div class="chips-note">اكبس على أي خدمة، وبتفتحلك رسالة واتساب جاهزة.</div>
-    </div>
-  </section>
-
-<footer>
-  <div>© <span id="y"></span> شفق ميديا — كل يوم شفق جديد لعلامتك</div>
-  <div class="links">
-    <a href="https://instagram.com/shafq.media" target="_blank" rel="noopener"><span class="ltr">@shafq.media</span></a>
-    <a href="https://wa.me/966563079286" target="_blank" rel="noopener"><span class="ltr">+966 56 307 9286</span></a>
-    <span class="ltr">shafqmedia@gmail.com</span>
   </div>
-</footer>
 </section>
+
 </main>
 
-<script>
-  document.getElementById('y').textContent = new Date().getFullYear();
+<footer>
+  <div class="wrap">
+    <div class="grid">
+      <div>
+        <a class="lg" href="#top" aria-label="العودة للأعلى"><img src="assets/logo-white.png" alt="شعار شفق ميديا" width="213" height="437"></a>
+        <p>وكالة تسويق ومحتوى من دمشق.</p>
+        <div class="soc">
+          <a data-wa="مرحباً شفق ميديا." aria-label="واتساب"><svg viewBox="0 0 24 24"><path d="M20.5 11.6A8.5 8.5 0 0 1 8 19.1L3.5 20.5l1.4-4.3A8.5 8.5 0 1 1 20.5 11.6z"/><path d="M9 8.5c0 3.5 3 6.5 6.5 6.5"/></svg></a>
+          <a href="https://www.instagram.com/shafq.media" target="_blank" rel="noopener" aria-label="إنستغرام"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></svg></a>
+          <a href="mailto:shafqmedia@gmail.com" aria-label="البريد الإلكتروني"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></a>
+        </div>
+      </div>
+      <nav aria-label="روابط"><h4>روابط</h4><a href="#services">الخدمات</a><a href="#pricing">الأسعار</a><a href="request/index.html">اطلب خدمتك</a><a href="terms/index.html">الشروط وسياسة الاسترجاع</a></nav>
+      <nav aria-label="منتجاتنا"><h4>منتجاتنا</h4><a href="https://bot.shafqmedia.com/">شفق بوت</a><a href="demo/index.html">جرّب نظام شفق</a></nav>
+    </div>
+    <div class="copy"><span>© <span id="yr">2026</span> شفق ميديا. جميع الحقوق محفوظة.</span><span>دمشق، سوريا</span></div>
+  </div>
+</footer>
 
-  // توهج يلحق الماوس على البطاقات
-  document.querySelectorAll('.card').forEach(card => {
-    card.addEventListener('pointermove', e => {
-      const r = card.getBoundingClientRect();
-      card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-      card.style.setProperty('--my', (e.clientY - r.top) + 'px');
-    });
-  });
+<a class="fab" data-wa="مرحباً شفق ميديا." aria-label="راسلنا على واتساب"><svg viewBox="0 0 24 24"><path d="M20.5 11.6A8.5 8.5 0 0 1 8 19.1L3.5 20.5l1.4-4.3A8.5 8.5 0 1 1 20.5 11.6z"/><path d="M9 8.5c0 3.5 3 6.5 6.5 6.5"/></svg></a>
 
-  // الكلمة المتبدلة بقسم الخدمات
-  const words = ['تصوير درون','فيلم لمشروعك','إدارة سوشيال ميديا','تغطية لفعاليتك','موقع لمشروعك','تطبيق لمشروعك','نظام لشغلك','بوت رد تلقائي'];
-  const rot = document.getElementById('rot');
-  const chips = document.querySelectorAll('.chip');
-  let wi = 0;
-  const mark = () => chips.forEach(c => c.classList.toggle('on', +c.dataset.i === wi));
-  mark();
-  setInterval(() => {
-    rot.classList.add('out');
-    setTimeout(() => {
-      wi = (wi + 1) % words.length;
-      rot.textContent = words[wi];
-      rot.classList.remove('out');
-      mark();
-    }, 300);
-  }, 2200);
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mtitle">
+  <div class="box">
+    <div class="top"><div><h3 id="mtitle"></h3><p id="mdesc"></p></div><button class="x" id="mclose" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div id="mgal"></div>
+    <a class="btn btn-p" id="mwa">اطلب هذه الخدمة</a>
+  </div>
+</div>
+<div class="pay" id="pay" role="dialog" aria-modal="true" aria-labelledby="ptitle">
+  <div class="box">
+    <button class="x" type="button" id="pclose" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <div class="steps-bar" id="pbar"><i></i><i></i><i></i><i></i></div>
+    <div id="pbody"></div>
+  </div>
+</div>
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="عرض العمل"><button class="x btn btn-o" id="lbclose" aria-label="إغلاق">إغلاق</button><div id="lbin"></div></div>
 
-  // الشاشة الأولى: الشمس بتغيب والكلام بيبهت مع النزول
-  const hero = document.querySelector('.hero');
-  let ticking = false;
-  const onScroll = () => {
-    if (ticking) return; ticking = true;
-    requestAnimationFrame(() => {
-      const p = Math.min(1, Math.max(0, window.scrollY / (hero.offsetHeight * 0.85)));
-      hero.style.setProperty('--p', p.toFixed(3));
-      ticking = false;
-    });
-  };
-  window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
-
-  // «شفق جديد»: لما تقرّب الماوس الشمس بتتوهج (وعالموبايل بالكبس)
-  // نفس الحركة على «شفق جديد» بالشاشة الأولى والتانية: الشمس اللي جنبها بتتوهج
-  document.querySelectorAll('.sn').forEach((sn) => {
-    const host = sn.closest('.dawn') || document.body;
-    const on = () => host.classList.add('glow'), off = () => host.classList.remove('glow');
-    sn.addEventListener('mouseenter', on);
-    sn.addEventListener('mouseleave', off);
-    sn.addEventListener('click', () => { sn.classList.add('tap'); on(); setTimeout(() => { sn.classList.remove('tap'); off(); }, 1400); });
-  });
-
-
-  // سكرول بالماوس: كل حركة عجلة بتنقلك شاشة كاملة
-  const screens = [...document.querySelectorAll('.screen')];
-  let busy = false, quietT = 0, doneT = 0;
-  const idx = () => {
-    const y = window.scrollY + window.innerHeight * 0.4;
-    let i = 0; screens.forEach((s, k) => { if (s.offsetTop <= y) i = k; }); return i;
-  };
-  const go = (i) => {
-    i = Math.max(0, Math.min(screens.length - 1, i));
-    busy = true; clearTimeout(doneT);
-    window.scrollTo({ top: screens[i].offsetTop, behavior: 'smooth' });
-    doneT = setTimeout(() => { doneT = 0; }, 750);
-  };
-  const release = () => { clearTimeout(quietT); quietT = setTimeout(() => { if (!doneT) busy = false; else release(); }, 180); };
-  window.addEventListener('wheel', (e) => {
-    if (e.ctrlKey || Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
-    const i = idx(), s = screens[i], down = e.deltaY > 0;
-    const top = s.offsetTop, bottom = top + s.offsetHeight, vh = window.innerHeight, y = window.scrollY;
-    // إذا الشاشة أطول من الشاشة الحقيقية (متل الخدمات عالشاشات الصغيرة) خلّيه يسكرول عادي جواتها
-    if (s.offsetHeight > vh * 1.2) {
-      if (down && y + vh < bottom - 2) return;
-      if (!down && y > top + 2) return;
-    }
-    e.preventDefault();
-    release();
-    if (busy || Math.abs(e.deltaY) < 4) return;
-    go(i + (down ? 1 : -1));
-  }, { passive: false });
-  window.addEventListener('keydown', (e) => {
-    if (/input|textarea/i.test(document.activeElement.tagName)) return;
-    const k = { PageDown: 1, ArrowDown: 1, ' ': 1, PageUp: -1, ArrowUp: -1 }[e.key];
-    if (!k || busy) return;
-    const s = screens[idx()];
-    if (s.offsetHeight > window.innerHeight * 1.2) return;
-    e.preventDefault(); go(idx() + k); release();
-  });
-
-  // كل قسم بيطلع بحركة لما يوصله الزائر
-  const io = new IntersectionObserver((entries) => entries.forEach((e) => {
-    if (!e.isIntersecting) return;
-    e.target.classList.add('in');
-    if (e.target.id === 'cards') setTimeout(() => e.target.querySelectorAll('.card').forEach((c) => c.classList.add('play')), 500);
-    io.unobserve(e.target);
-  }), { threshold: 0.2 });
-  document.querySelectorAll('[data-reveal], #cards').forEach((el) => io.observe(el));
-</script>
+<script src="assets/site.js?v=5"></script>
 </body>
 </html>

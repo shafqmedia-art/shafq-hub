@@ -138,6 +138,7 @@
     },
     auditLog: function () { return call('GET', '/rest/v1/audit_log?select=at,actor_name,tbl,op,summary&order=id.desc&limit=60'); },
     rpc: function (name, body) { return call('POST', '/rest/v1/rpc/' + name, body || {}); },
+    receiptUrl: function (path) { return call('POST', '/storage/v1/object/sign/receipts/' + String(path).split('/').map(encodeURIComponent).join('/'), { expiresIn: 300 }).then(function (r) { return URL_ + '/storage/v1' + r.signedURL; }); },
     notify: function (items) { if (!sess) return Promise.resolve(null); return call('POST', '/functions/v1/push', { action: 'notify', items: items }).catch(function () { return null; }); },
     idle: function () { return chain.catch(function () {}); }
   };

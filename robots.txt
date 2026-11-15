@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /shafq-app/
+Disallow: /demo/app/
+Sitemap: https://shafqmedia.com/sitemap.xml

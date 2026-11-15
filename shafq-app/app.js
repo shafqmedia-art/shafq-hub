@@ -320,6 +320,7 @@
 
   var acts = {
     close: closeForm,
+    openReceipt: function (d) { var it = byId('items', d.id); if (!it || !it.receipt || !isMgr()) return; var w = window.open('', '_blank'); SRV.receiptUrl(it.receipt).then(function (u) { if (w) w.location = u; else location.href = u; }, function () { if (w) w.close(); toast('تعذر فتح الوصل'); }); },
     theme: function () { var l = document.body.classList.toggle('t-light'); document.body.classList.toggle('t-dark', !l); localStorage.setItem(TKEY, l ? 'light' : 'dark'); render(); },
     logout: function () { pstate.data = null; pstate.month = ''; if (ONLINE) { SRV.idle().then(pushOff).then(function () { return SRV.signOut(); }).then(function () { db = blank(); location.hash = '#/'; checkSetup(); }); return; } localStorage.removeItem(SKEY); location.hash = '#/'; render(); },
     retry: function () { boot(); },
@@ -488,8 +489,10 @@
       statuses: ['جديد', 'تم الرد', 'بانتظار العميل', 'حُجز', 'ضاع'],
       fields: function () { return [{ k: 'name', label: 'الاسم', req: true }, { k: 'phone', label: 'الرقم', type: 'tel' }, { k: 'service', label: 'الخدمة المطلوبة', type: 'select', options: sel(['درون', 'إدارة صفحة', 'تغطية فعالية', 'فيلم وثائقي', 'أخرى']) }, { k: 'source', label: 'المصدر', type: 'select', options: sel(['واتساب', 'إنستغرام', 'نموذج الموقع', 'اتصال', 'إحالة']) }, { k: 'date', label: 'تاريخ الطلب', type: 'date', def: function () { return today(); } }, { k: 'owner', label: 'من يتابعه', type: 'select', options: memberOpts('غير محدد') }, { k: 'lost', label: 'سبب الضياع (إن ضاع)', type: 'select', options: [['', 'لا ينطبق']].concat(sel(['السعر', 'التأخر في الرد', 'الموعد', 'آخر'])) }, { k: 'notes', label: 'ملاحظات', type: 'area', wide: true }]; },
       summary: function (it) { return h(it.service || '') + ' · ' + h(it.source || '') + ' · ' + h(it.status); },
-      rows: function (it) { return [['الرقم', L(it.phone || 'غير محدد')], ['تاريخ الطلب', it.date ? h(dateAr(it.date)) : 'غير محدد'], ['يتابعه', h(it.owner ? userName(it.owner) : 'غير محدد')], ['سبب الضياع', h(it.lost || 'لا ينطبق')]]; },
-      acts: function (it) { return it.phone ? '<a class="btn sm" target="_blank" rel="noopener" href="' + h(waTo(it.phone, 'السلام عليكم ورحمة الله، أهلاً بكم في شفق ميديا. وصلنا طلبكم بخصوص ' + (it.service || 'خدماتنا') + '، ويسعدنا خدمتكم.')) + '">رد جاهز · واتساب</a>' : ''; },
+      rows: function (it) { var r = [['الرقم', L(it.phone || 'غير محدد')], ['تاريخ الطلب', it.date ? h(dateAr(it.date)) : 'غير محدد'], ['يتابعه', h(it.owner ? userName(it.owner) : 'غير محدد')], ['سبب الضياع', h(it.lost || 'لا ينطبق')]]; if (it.sub_no) r = [['رقم الاشتراك', L(it.sub_no)], ['الباقة', h((it.plan || '') + ' · ' + (it.term || ''))], ['المبلغ', L(usd(num(it.amount)))], ['طريقة الدفع', h(it.method || '')], ['حالة الدفع', h(it.paid || 'بانتظار التأكيد')], ['تاريخ الدفع', it.pay_date ? h(dateAr(it.pay_date)) : 'غير محدد'], ['المسؤول عن الميديا', h(it.contact || '')]].concat(it.note ? [['ملاحظة', h(it.note)]] : [], r);
+        else if (it.req_no) r = [['رقم الطلب', L(it.req_no)], ['الخدمة', h(it.service || '')], ['المسؤول', h(it.contact || '')], ['الهدف', h(it.purpose || '')], ['التفاصيل', h(it.details || 'لا يوجد')], ['متى يحتاجها', h(it.when || 'غير محدد')]].concat(r);
+        return r; },
+      acts: function (it) { return (it.sub_no && isMgr() && !it.client_done ? btn(it.receipt ? 'تأكيد الدفع وتحويله لعميل' : 'تحويله لعميل', 'sub2client', { id: it.id }, 'sm pri') : '') + (it.client_done ? '<a class="btn sm" href="#/client/' + h(it.client_done) + '">فتح العميل</a>' : '') + (it.receipt && ONLINE ? btn('عرض وصل الدفع', 'openReceipt', { id: it.id }, 'sm') : '') + (it.phone ? '<a class="btn sm" target="_blank" rel="noopener" href="' + h(waTo(it.phone, it.sub_no ? 'السلام عليكم ورحمة الله، أهلاً بكم في شفق ميديا. وصلنا وصل دفع اشتراككم رقم ' + it.sub_no + '، وسنتواصل معكم لبدء العمل.' : it.req_no ? 'السلام عليكم ورحمة الله، أهلاً بكم في شفق ميديا. وصلنا طلبكم رقم ' + it.req_no + ' بخصوص ' + (it.service || 'خدماتنا') + '، وهذا عرض السعر حسب التفاصيل:' : 'السلام عليكم ورحمة الله، أهلاً بكم في شفق ميديا. وصلنا طلبكم بخصوص ' + (it.service || 'خدماتنا') + '، ويسعدنا خدمتكم.')) + '">رد جاهز · واتساب</a>' : ''); },
       kpis: function (l) { var mon = monthOf(today()), ml = l.filter(function (x) { return monthOf(x.date || '') === mon; }), bk = ml.filter(function (x) { return x.status === 'حُجز'; }).length; return kpi('لم يُرد عليها', String(l.filter(function (x) { return x.status === 'جديد'; }).length), true) + kpi('بانتظار العميل', String(l.filter(function (x) { return x.status === 'بانتظار العميل'; }).length)) + kpi('حُجز هذا الشهر', String(bk)) + kpi('نسبة التحويل', (ml.length ? Math.round(bk / ml.length * 100) : 0) + '%', false, 'من ' + ml.length + ' طلب'); } },
     papers: { title: 'الأوراق', sub: 'كل ورقة لها رمز ورقم · لا حذف: الورقة الخطأ تُلغى', kind: 'paper', add: '+ ورقة جديدة', noEdit: true, noDelete: true,
       statuses: ['سارية', 'ملغاة'],
@@ -549,6 +552,17 @@
     voidPaper: function (d) { if (!confirm('إلغاء الورقة؟ تبقى في السجل برقمها.')) return; byId('items', d.id).status = 'ملغاة'; save(); render(); toast('أُلغيت الورقة'); },
     mfilter: function (d) { mstate.filter[d.mod] = d.v; render(); },
     mtag: function (d) { mstate.tag[d.mod] = d.v; render(); },
+    sub2client: function (d) {
+      var it = byId('items', d.id); if (!it || !isMgr() || it.client_done) return;
+      var cash = !it.receipt;
+      if (!confirm((cash ? 'تحويل «' : 'تأكيد دفع وتحويل «') + it.name + '» إلى عميل؟\n' + (cash ? 'الدفع كاش، فما رح تنسجّل دفعة. سجّلها من المالية لما تستلم المبلغ.' : 'رح تنسجّل دفعة بقيمة ' + usd(num(it.amount)) + ' بالمالية.'))) return;
+      var months = { 'شهري': 1, '3 أشهر': 3, '6 أشهر': 6, 'سنوي': 12 }[it.term] || 1;
+      var cid = uid();
+      db.clients.push({ id: cid, name: it.name, kind: 'page', value: Math.round(num(it.amount) / months), months: months, start_date: today(), notes: 'اشتراك من الموقع · ' + (it.sub_no || '') + ' · باقة ' + (it.plan || '') + ' (' + (it.term || '') + ')' + (it.contact ? ' · المسؤول: ' + it.contact : '') + (it.phone ? ' · ' + it.phone : ''), roles: [{ role: '', user: '' }] });
+      if (!cash) db.moves.push({ id: uid(), date: it.pay_date || today(), dir: 'in', cat: 'دفعة عميل', amount: num(it.amount), cur: 'USD', rate: 1, usd: num(it.amount), note: 'اشتراك من الموقع ' + (it.sub_no || '') + ' · ' + (it.method || ''), service: 'اشتراك باقة ' + (it.plan || '') + ' (' + (it.term || '') + ')', receipt: it.sub_no || '', client_id: cid, user_id: '', item_id: '', created_by: me().id, is_void: false });
+      it.status = 'حُجز'; it.client_done = cid; it.paid = cash ? 'كاش · لم يُدفع بعد' : 'تم التأكيد';
+      save(); render(); toast(cash ? 'صار عميلاً' : 'تم تأكيد الدفع وصار عميلاً');
+    },
     lead2client: function (d) { var l = byId('items', d.id); if (!confirm('تحويل «' + l.name + '» إلى عميل؟')) return; db.clients.push({ id: uid(), name: l.name, kind: 'page', value: num(l.value), months: 0, start_date: today(), notes: l.notes || '', roles: [{ role: '', user: '' }] }); l.status = 'صار عميلاً'; save(); render(); toast('صار عميلاً'); },
     calPrev: function () { mstate.cal = addMonths(calMonth() + '-15', -1).slice(0, 7); render(); },
     calNext: function () { mstate.cal = addMonths(calMonth() + '-15', 1).slice(0, 7); render(); },

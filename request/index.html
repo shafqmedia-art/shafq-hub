@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://ypsarmfjbkxgoepmibia.supabase.co; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>اطلب خدمتك | شفق ميديا</title>
+<meta name="description" content="أخبرنا بما تحتاجه من شفق ميديا، ونعود إليك بعرض سعر حسب التفاصيل.">
+<meta name="theme-color" content="#121212">
+<link rel="icon" type="image/png" href="../assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css?v=6">
+<style>
+.rq{min-height:100vh;min-height:100svh;padding:120px 0 80px}
+.rq .wrap{max-width:820px}
+.rq .head{margin-bottom:28px}
+.rq form.card{padding:34px}
+.rq .sec{margin-bottom:26px}
+.rq .sec>label,.rq .lab{display:block;font-size:15px;font-weight:800;margin-bottom:10px}
+.rq .lab small{color:var(--mut);font-weight:600;margin-right:6px}
+.svcs{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.svcs button{min-height:52px;padding:8px 14px;border:1px solid var(--ln2);border-radius:var(--rb);font-size:15px;font-weight:700;color:#d6d5cf;background:#151515;transition:border-color .4s var(--ez),background .4s var(--ez),color .4s var(--ez);text-align:center}
+.svcs button:hover{border-color:var(--tx)}
+.svcs button.on{background:var(--lime);border-color:var(--lime);color:var(--ink)}
+.rq .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.rq input,.rq textarea{width:100%;background:#141414;border:1px solid var(--ln2);border-radius:var(--rb);color:var(--tx);font:inherit;font-size:16px;padding:12px 14px;outline:none}
+.rq textarea{min-height:140px;resize:vertical}
+.rq input:focus,.rq textarea:focus{border-color:var(--lime)}
+.rq .note{color:var(--mut);font-size:14px;margin-top:12px}
+.rq .send{width:100%;margin-top:6px}
+.topbar{position:fixed;inset:0 0 auto;z-index:50;background:rgba(18,18,18,.9);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--ln)}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:76px;max-width:var(--w)}
+.topbar img{height:44px;width:auto}
+.topbar .back{font-size:15px;font-weight:700;color:#cfcec8}
+.topbar .back:hover{color:var(--tx)}
+@media (max-width:640px){.rq form.card{padding:22px 18px}.rq .grid2{grid-template-columns:1fr}.svcs{grid-template-columns:1fr 1fr}.rq{padding-top:100px}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="wrap">
+  <a href="../index.html" aria-label="موقع شفق ميديا"><img src="../assets/logo-white.png" alt="شعار شفق ميديا" width="213" height="437"></a>
+  <a class="back" href="../index.html">العودة إلى الموقع</a>
+</div></header>
+<main class="rq"><div class="wrap">
+  <div class="head rv in"><div class="eyebrow">طلب خدمة</div><h2>اطلب خدمتك</h2><p class="lead">أخبرنا بما تحتاجه، ونعود إليك بعرض سعر حسب التفاصيل.</p></div>
+  <div id="rqbox">
+  <form class="card" id="rqform" novalidate>
+    <div class="sec"><span class="lab">ما الخدمة التي تحتاجها؟</span><div class="svcs" id="svcs"></div></div>
+    <div class="sec grid2">
+      <div><label for="rco">اسم الشركة أو العلامة</label><input id="rco" maxlength="80" autocomplete="organization"></div>
+      <div><label for="rct">اسم المسؤول</label><input id="rct" maxlength="60" autocomplete="name"></div>
+      <div><label for="rph">رقم الواتساب</label><input id="rph" type="tel" dir="ltr" maxlength="20" autocomplete="tel" placeholder="09xxxxxxxx"></div>
+      <div><label for="rwh">متى تحتاجها؟ <small style="color:var(--mut);font-weight:600">(اختياري)</small></label><input id="rwh" maxlength="60" placeholder="مثلاً: خلال شهر"></div>
+    </div>
+    <div class="sec"><label for="rpu">ما الهدف من الخدمة؟</label><input id="rpu" maxlength="200" placeholder="مثلاً: موقع يعرّف بمطعمنا ويستقبل الحجوزات"></div>
+    <div class="sec"><label for="rde">التفاصيل <small style="color:var(--mut);font-weight:600">(كلما كانت أوضح، كان عرض السعر أدق)</small></label><textarea id="rde" maxlength="1500" placeholder="الصفحات أو المزايا المطلوبة، عدد الأيام، المكان، أمثلة تعجبك..."></textarea></div>
+    <input class="hp" type="text" id="rhw" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <div class="err" id="rerr" role="alert"></div>
+    <button class="btn btn-p send" type="submit" id="rsend">إرسال الطلب</button>
+    <p class="note">نراجع طلبك ونرسل لك عرض السعر على رقم الواتساب الذي كتبته. إرسال الطلب يعني موافقتك على <a href="../terms/index.html" style="color:var(--lime)">الشروط وسياسة الاسترجاع</a>.</p>
+  </form>
+  </div>
+</div></main>
+<script src="../assets/request.js"></script>
+</body>
+</html>
