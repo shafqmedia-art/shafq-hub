@@ -213,7 +213,7 @@
       var nm = '<input aria-label="اسم الدور" list="dl_roles" autocomplete="off" placeholder="اسم الدور" data-chg="rolename" data-id="' + h(id) + '" data-i="' + i + '" value="' + h(r.role) + '" style="min-height:44px;width:150px;background:var(--p2);border:1px solid var(--ln);border-radius:12px;padding:0 10px">';
       return '<div><span class="acts">' + nm + sel + '</span><span class="acts">' + (u ? '<a class="btn sm" target="_blank" rel="noopener" href="' + h(waLink(u, cl.name)) + '">شو صار معك؟ · واتساب</a>' : '') + btn('حذف', 'delRole', { id: id, i: i }, 'sm') + '</span></div>';
     }).join('') + '</div><datalist id="dl_roles">' + rl.map(function (x) { return '<option value="' + h(x) + '">'; }).join('') + '</datalist>' + btn('+ إضافة دور', 'addRole', { id: id }, 'sm');
-    var c = head(cl.name, (cl.kind === 'project' ? 'مشروع' : 'إدارة صفحات') + (e ? ' · ينتهي ' + dateAr(e) : ''), btn('تعديل', 'editClient', { id: id }) + clientLoginBtn(cl) + (ONLINE && clientUser(cl) ? btn('إرسال إشعار', 'sendNote', { client: id }) : '') + btn('+ حركة مالية', 'addMove', { client: id }, 'pri'));
+    var c = head(cl.name, (cl.kind === 'project' ? 'مشروع' : 'إدارة صفحات') + (e ? ' · ينتهي ' + dateAr(e) : ''), btn('تعديل', 'editClient', { id: id }) + clientLoginBtn(cl) + (ONLINE && clientUser(cl) ? btn('إرسال إشعار', 'sendNote', { client: id }) : '') + btn('+ حركة مالية', 'addMove', { client: id }, 'pri') + (isMgr() ? btn('حذف العميل', 'delClient', { id: id }) : ''));
     var allIn = sum(mv.filter(function (m) { return m.dir === 'in'; }), function (m) { return m.usd; }), mths = num(cl.months);
     var total = cl.kind === 'project' ? num(cl.value) : (mths ? num(cl.value) * mths : 0);
     c += '<div class="kpis">' + kpi('قيمة العقد', usd(total || num(cl.value)), false, cl.kind === 'project' ? 'للمشروع' : (mths ? usd(num(cl.value)) + ' شهرياً × ' + mths + ' أشهر' : 'شهرياً · المدة غير محددة')) +
@@ -326,6 +326,21 @@
     retry: function () { boot(); },
     addClient: function () { clientForm(null); },
     editClient: function (d) { clientForm(byId('clients', d.id)); },
+    delClient: function (d) {
+      var cl = byId('clients', d.id); if (!cl) return;
+      var mv = db.moves.filter(function (m) { return m.client_id === cl.id; }), tk = db.tasks.filter(function (t) { return t.client_id === cl.id; });
+      var msg = 'حذف العميل «' + cl.name + '» نهائياً؟ لا يمكن التراجع.';
+      if (tk.length) msg += '\n\nرح تنحذف معه ' + tk.length + ' مهمة.';
+      if (mv.length) msg += '\n\nوعنده ' + mv.length + ' حركة مالية: رح تنحذف كمان من المالية.';
+      if (clientUser(cl)) msg += '\n\nملاحظة: حساب دخول العميل بيضل، وقّفه من الفريق إذا بدك.';
+      if (!confirm(msg)) return;
+      var mids = mv.map(function (m) { return m.id; });
+      db.moves = db.moves.filter(function (m) { return m.client_id !== cl.id; });
+      db.tasks = db.tasks.filter(function (t) { return t.client_id !== cl.id; });
+      db.items.forEach(function (x) { if (x.client_done === cl.id) delete x.client_done; if (x.kind === 'paper' && mids.indexOf(x.move_id) >= 0) x.status = 'ملغاة'; });
+      db.clients = db.clients.filter(function (c) { return c.id !== cl.id; });
+      save(); location.hash = '#/clients'; render();
+    },
     addMember: function () { memberForm(null); },
     editMember: function (d) { memberForm(byId('users', d.id)); },
     toggleMember: function (d) { var u = byId('users', d.id); u.active = u.active === false; save(); render(); toast(u.active ? 'تم التفعيل' : 'تم الإيقاف'); },
