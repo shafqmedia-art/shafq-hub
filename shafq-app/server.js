@@ -138,6 +138,10 @@
     },
     auditLog: function () { return call('GET', '/rest/v1/audit_log?select=at,actor_name,tbl,op,summary&order=id.desc&limit=60'); },
     rpc: function (name, body) { return call('POST', '/rest/v1/rpc/' + name, body || {}); },
+    upload: function (bucket, path, blob) {
+      var go = function () { return fetch(URL_ + '/storage/v1/object/' + bucket + '/' + String(path).split('/').map(encodeURIComponent).join('/'), { method: 'POST', headers: { apikey: KEY, Authorization: 'Bearer ' + sess.access_token, 'Content-Type': blob.type || 'application/octet-stream', 'x-upsert': 'true', 'cache-control': '3600' }, body: blob }).then(function (res) { if (!res.ok) return res.text().then(function (t) { var er = new Error('تعذر رفع الملف (' + res.status + ')' + (/bucket/i.test(t) ? ': شغّل ملف 11-plan-pages.sql أول' : '')); er.status = res.status; throw er; }); return URL_ + '/storage/v1/object/public/' + bucket + '/' + String(path).split('/').map(encodeURIComponent).join('/'); }, function () { throw new Error('تعذر الاتصال بالسيرفر. تحقق من الإنترنت.'); }); };
+      return (sess && sess.exp - Date.now() < 60000 ? refresh() : Promise.resolve()).then(go);
+    },
     receiptUrl: function (path) { return call('POST', '/storage/v1/object/sign/receipts/' + String(path).split('/').map(encodeURIComponent).join('/'), { expiresIn: 300 }).then(function (r) { return URL_ + '/storage/v1' + r.signedURL; }); },
     notify: function (items) { if (!sess) return Promise.resolve(null); return call('POST', '/functions/v1/push', { action: 'notify', items: items }).catch(function () { return null; }); },
     idle: function () { return chain.catch(function () {}); }
