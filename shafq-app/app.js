@@ -658,7 +658,7 @@
 
 
   /* ---------- الأقسام العامة (مشاريع، درون، محتوى، فريلانس، مؤثرون، محتملون، طلبات، أوراق، معدات) ---------- */
-  var mstate = { filter: {}, tag: {}, cal: '', stage: {}, pm: {}, teamSpec: '', pinfo: {}, pload: {} };
+  var mstate = { filter: {}, tag: {}, cal: '', stage: {}, pm: {}, teamSpec: '', pinfo: {}, pload: {}, ftype: {} };
   var PSTEPS = ['تحضير', 'تصوير ومونتاج', 'مجدول', 'منشور'], POLD = { 'فكرة': 'تحضير', 'كتابة': 'تحضير', 'تصميم أو مونتاج': 'تصوير ومونتاج', 'موافقة العميل': 'تصوير ومونتاج' };
   var PNEXT = { 'تحضير': 'جاهز للتصوير', 'تصوير ومونتاج': 'جاهز، للجدولة', 'مجدول': 'نزل' };
   var CSTEPS = ['عم نحضّر', 'جاهز', 'نزل'];
@@ -675,11 +675,39 @@
   function flowView(key, m, all, opt) {
     var cnt = {}; PSTEPS.forEach(function (s) { cnt[s] = 0; }); all.forEach(function (x) { cnt[pst(x.status)]++; });
     var cur = mstate.stage[key] || PSTEPS.filter(function (s) { return s !== 'منشور' && cnt[s]; })[0] || PSTEPS[0];
-    var c = '<nav class="ftabs" role="tablist" aria-label="المراحل">' + PSTEPS.map(function (s) { var on = s === cur; return '<button type="button" role="tab" aria-selected="' + on + '" class="' + (on ? 'on' : '') + '" data-act="fstage" data-mod="' + key + '" data-v="' + h(s) + '"><span>' + h(PTAB[s] || s) + '</span><b>' + cnt[s] + '</b></button>'; }).join('') + '</nav>';
-    var list = all.filter(function (x) { return pst(x.status) === cur; }).sort(function (a, b) { return ((a.date || '9') + (a.time || '')) < ((b.date || '9') + (b.time || '')) ? -1 : 1; });
+    var c = '<div class="fhead"><nav class="ftabs" role="tablist" aria-label="المراحل">' + PSTEPS.map(function (s) { var on = s === cur; return '<button type="button" role="tab" aria-selected="' + on + '" class="' + (on ? 'on' : '') + '" data-act="fstage" data-mod="' + key + '" data-v="' + h(s) + '"><span>' + h(PTAB[s] || s) + '</span><b>' + cnt[s] + '</b></button>'; }).join('') + '</nav>';
+    var inStage = all.filter(function (x) { return pst(x.status) === cur; }), types = {};
+    inStage.forEach(function (x) { var t = x.type || 'منشور'; types[t] = (types[t] || 0) + 1; });
+    var ft = mstate.ftype[key] || ''; if (ft && !types[ft]) ft = '';
+    var tk = Object.keys(types);
+    if (tk.length > 1) c += '<div class="ftypes">' + [['', 'الكل', inStage.length]].concat(tk.map(function (t) { return [t, t, types[t]]; })).map(function (t) { return '<button type="button" class="' + (t[0] === ft ? 'on' : '') + '" data-act="ftype" data-mod="' + key + '" data-v="' + h(t[0]) + '">' + h(t[1]) + ' <small>' + t[2] + '</small></button>'; }).join('') + '</div>';
+    c += '</div>';
+    var list = inStage.filter(function (x) { return !ft || (x.type || 'منشور') === ft; }).sort(function (a, b) { return ((a.date || '9') + (a.time || '')) < ((b.date || '9') + (b.time || '')) ? -1 : 1; });
     if (cur === 'منشور') list.reverse();
-    c += list.length ? '<div class="fgrid">' + list.map(function (x) { return flowCard(x, opt); }).join('') + '</div>' : '<p class="empty">ما في شي بهالمرحلة.</p>';
-    return c;
+    if (!list.length) return c + '<p class="empty">ما في شي بهالمرحلة.</p>';
+    var groups = [], gi = {};
+    list.forEach(function (x) { var k = weekKey(x.date); if (!(k in gi)) { gi[k] = groups.length; groups.push([k, []]); } groups[gi[k]][1].push(x); });
+    return c + '<div class="frows">' + groups.map(function (g) { return '<section class="fweek"><h3>' + h(weekLabel(g[0])) + '<small>' + g[1].length + '</small></h3><div class="flist">' + g[1].map(function (x) { return flowRow(x, opt); }).join('') + '</div></section>'; }).join('') + '</div>';
+  }
+  function weekKey(d) { if (!d) return ''; var dt = new Date(d + 'T12:00:00'); dt.setDate(dt.getDate() - (dt.getDay() + 1) % 7); return dt.toISOString().slice(0, 10); }
+  function weekLabel(k) {
+    if (!k) return 'بدون تاريخ';
+    var e = addDays(k, 6), t = today(), tk = weekKey(t), m0 = dateAr(k).split(' ').slice(1).join(' '), m1 = dateAr(e).split(' ').slice(1).join(' ');
+    var rng = +k.slice(8, 10) + (m0 === m1 ? '' : ' ' + m0) + ' – ' + +e.slice(8, 10) + ' ' + m1;
+    return (k === tk ? 'هالأسبوع · ' : k === addDays(tk, 7) ? 'الأسبوع الجاي · ' : '') + rng;
+  }
+  var NEXT_SHORT = { 'مجدول': 'نزل' };
+  function nextShort(it, s) { if (s === 'تحضير') return isReady(it) ? 'للمونتاج' : isReel(it) ? 'للتصوير' : 'للتصميم'; if (s === 'تصوير ومونتاج') return 'للجدولة'; return NEXT_SHORT[s] || ''; }
+  function flowRow(it, opt) {
+    var s = pst(it.status), i = PSTEPS.indexOf(s), nx = nextShort(it, s), dt = it.date ? new Date(it.date + 'T12:00:00') : null;
+    var meta = [it.type, it.time, it.client_id && !(opt && opt.noClient) ? clientName(it.client_id) : '', s === 'تصوير ومونتاج' ? pLabel(it, s) : ''].filter(Boolean).join(' · ');
+    return '<div class="frow' + (s === 'منشور' ? ' done' : '') + '">' +
+      '<button type="button" class="fr-main" data-act="editPost" data-id="' + h(it.id) + '" title="تعديل">' +
+        '<span class="fr-date">' + (dt ? '<b>' + dt.getDate() + '</b><small>' + DAYS7[(dt.getDay() + 1) % 7].replace('ال', '') + '</small>' : '<b>—</b>') + '</span>' +
+        '<span class="fr-txt"><b>' + h(it.name) + '</b><small>' + h(meta) + '</small>' + (it.review_note && s === 'تصوير ومونتاج' ? '<em>ملاحظة: ' + h(it.review_note) + '</em>' : '') + '</span>' +
+      '</button>' +
+      '<span class="fr-acts">' + (i > 0 ? '<button type="button" class="fr-back" data-act="pstep" data-id="' + h(it.id) + '" data-d="-1" title="رجوع خطوة" aria-label="رجوع خطوة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-1"/></svg></button>' : '') +
+      (nx ? '<button type="button" class="fr-go" data-act="pstep" data-id="' + h(it.id) + '" data-d="1">' + h(nx) + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>' : '') + '</span></div>';
   }
   function flowCard(it, opt) {
     var s = pst(it.status), i = PSTEPS.indexOf(s), nx = pNext(it, s), meta = [it.type, it.client_id && !(opt && opt.noClient) ? clientName(it.client_id) : '', it.date ? dateAr(it.date) + (it.time ? ' ' + it.time : '') : ''].filter(Boolean).join(' · ');
@@ -736,7 +764,7 @@
       kpis: function (l) { var mon = monthOf(today()), t = today(), ml = l.filter(function (x) { return monthOf(x.created || x.date || '') === mon; }); var inc = sum(db.moves.filter(function (m) { return live(m) && m.dir === 'in' && monthOf(m.date) === mon && m.item_id && (byId('items', m.item_id) || {}).kind === 'drone'; }), function (m) { return m.usd; }); return kpi('طلبات الشهر', String(ml.length), true, 'الهدف 100') + kpi('طلعات اليوم', String(l.filter(function (x) { return x.date === t && x.status !== 'منتهٍ'; }).length)) + kpi('بانتظار التصريح', String(l.filter(function (x) { return x.permit === 'بانتظار الموافقة' && x.status !== 'منتهٍ'; }).length)) + kpi('دخل الدرون', usd(inc), false, 'هذا الشهر'); } },
     content: { title: 'خط إنتاج المحتوى', sub: 'كل منشور من الفكرة إلى النشر', kind: 'post', add: '+ منشور جديد', flow: true,
       statuses: PSTEPS,
-      fields: function () { return [{ k: 'name', label: 'عنوان المنشور', req: true }, { k: 'client_id', label: 'العميل', type: 'select', options: clientOpts() }, { k: 'type', label: 'النوع', type: 'select', options: sel(['بوست', 'ريل', 'ريل جاهز', 'كاروسيل', 'ستوري', 'منشور الجمعة']) }, { k: 'owner', label: 'المسؤول', type: 'select', options: memberOpts('غير محدد') }, { k: 'date', label: 'موعد النشر', type: 'date' }, { k: 'time', label: 'ساعة النشر', type: 'time' }, { k: 'preview', label: 'رابط المعاينة للعميل (درايف أو صورة)', type: 'url', wide: true, ph: 'https://' }, { k: 'caption', label: 'الكابشن', type: 'area', wide: true }, { k: 'notes', label: 'ملاحظات داخلية (ما بيشوفها العميل)', type: 'area', wide: true }]; },
+      fields: function () { return [{ k: 'name', label: 'عنوان المنشور', req: true }, { k: 'client_id', label: 'العميل', type: 'select', options: clientOpts() }, { k: 'type', label: 'النوع', type: 'select', options: sel(['بوست', 'ريل', 'ريل جاهز', 'كاروسيل', 'ستوري', 'منشور الجمعة']) }, { k: 'owner', label: 'المسؤول', type: 'select', options: memberOpts('غير محدد') }, { k: 'date', label: 'موعد النشر', type: 'date' }, { k: 'time', label: 'ساعة النشر', type: 'time' }, { k: 'caption', label: 'الكابشن', type: 'area', wide: true }, { k: 'notes', label: 'ملاحظات داخلية (ما بيشوفها العميل)', type: 'area', wide: true }]; },
       summary: function (it) { return h(it.type || '') + ' · ' + h(it.client_id ? clientName(it.client_id) : 'عام') + (it.date ? ' · ' + h(dateAr(it.date)) : ''); },
       kpis: function (l) { return kpi('قيد العمل', String(l.filter(function (x) { return x.status !== 'منشور'; }).length)) + kpi('بانتظار موافقة العميل', String(l.filter(function (x) { return x.status === 'موافقة العميل'; }).length), true) + kpi('مجدول', String(l.filter(function (x) { return x.status === 'مجدول'; }).length)) + kpi('نُشر هذا الشهر', String(l.filter(function (x) { return x.status === 'منشور' && monthOf(x.date || '') === monthOf(today()); }).length)); } },
     talent: { title: 'فريلانس', sub: 'قاعدة بيانات الفريلانسرز للمشاريع القادمة', kind: 'talent', add: '+ فريلانسر', tagField: 'skills', tagLabel: 'الاختصاص',
@@ -843,6 +871,9 @@
       if (!ONLINE) { var s0 = db.settings['plan_' + d.id]; if (s0) { s0.active = on; save(); } pi.active = on; render(); return; }
       SRV.rpc('set_plan_active', { p_client: d.id, p_on: on }).then(function () { pi.active = on; render(); toast(on ? 'الرابط رجع اشتغل' : 'انوقف الرابط'); }, function (e) { toast(e.message); });
     },
+    ftype: function (d) { mstate.ftype[d.mod] = d.v; render(); },
+    editPost: function (d) { var it = byId('items', d.id); if (!it) return; itemForm('content', it); var a = document.querySelector('#modal .acts'); if (a) a.insertAdjacentHTML('beforeend', btn('حذف المنشور', 'delPost', { id: d.id }, 'lnk danger')); },
+    delPost: function (d) { if (!confirm('حذف المنشور نهائياً؟')) return; db.items = db.items.filter(function (x) { return x.id !== d.id; }); closeForm(); save(); render(); toast('انحذف المنشور'); },
     pmMonth: function (d) { mstate.pm[d.id] = addMonths(((mstate.pm[d.id]) || today().slice(0, 7)) + '-15', +d.d).slice(0, 7); render(); },
     addPost: function (d) { itemForm('content', null, { client_id: d.client }); },
     rateOk: function () { var a = rateSug(); if (!a || !isMgr()) return; db.rates[today()] = Number(a.rate); save(); render(); toast('اعتمدت سعر اليوم'); },
