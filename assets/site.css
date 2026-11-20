@@ -364,3 +364,4 @@ i.kf{font-style:normal;display:inline-block;white-space:nowrap}
 .about .grid.one{grid-template-columns:1fr}
 .about .grid.one p.body{max-width:none}
 .about .grid.one p.body+p.body{margin-top:12px}
+.lb iframe.dv{width:min(92vw,1100px);height:min(86vh,640px);border:0;border-radius:8px;background:#000}

@@ -46,10 +46,13 @@
   // works (from content.json; only items with real media are shown)
   var WORKS = [];
   var CAT = { social: 'إدارة الحسابات', video: 'الفيديو', aerial: 'التصوير الجوي', events: 'المؤتمرات والمعارض', wedding: 'المناسبات', digital: 'الحلول الرقمية' };
+  // أعمال من مجلد «خدماتنا» على Google Drive (بتتحدث لحالها)
+  function driveId(v) { v = String(v || ''); return /^[\w-]{10,80}$/.test(v) ? v : ''; }
+  function thumb(id, w) { return 'https://drive.google.com/thumbnail?id=' + id + '&sz=w' + (w || 900); }
   function itemHtml(w, i) {
-    var img = safeSrc(w.image), vid = safeSrc(w.video);
-    var media = img ? '<img src="' + img + '" alt="' + esc(w.title) + '" loading="lazy">' : '<video src="' + vid + '#t=0.5" muted playsinline preload="metadata"></video>';
-    return '<div class="witem" role="button" tabindex="0" data-w="' + i + '">' + media + (vid ? '<span class="play"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></span>' : '') + (w.title ? '<div class="cap">' + esc(w.title) + '</div>' : '') + '</div>';
+    var did = driveId(w.drive), img = did ? thumb(did) : safeSrc(w.image), vid = did ? (w.kind === 'video') : safeSrc(w.video);
+    var media = img && (did || !vid) ? '<img src="' + img + '" alt="' + esc(w.title) + '" loading="lazy" referrerpolicy="no-referrer">' : '<video src="' + vid + '#t=0.5" muted playsinline preload="metadata"></video>';
+    return '<div class="witem" role="button" tabindex="0" data-w="' + i + '">' + media + ((w.drive ? w.kind === 'video' : vid) ? '<span class="play"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></span>' : '') + (w.title ? '<div class="cap">' + esc(w.title) + '</div>' : '') + '</div>';
   }
   function renderWorks(cat) {
     var list = WORKS.map(function (w, i) { return [w, i]; }).filter(function (p) { return !cat || p[0].service === cat; });
@@ -76,14 +79,21 @@
     WORKS = (d && Array.isArray(d.works) ? d.works : []).filter(function (w) { return w && (safeSrc(w.image) || safeSrc(w.video)); }).map(function (w) {
       return { title: String(w.title || '').slice(0, 80), service: w.service || '', image: w.image || '', video: w.video || '' };
     });
-    initWorks();
+    var api = d && typeof d.drive === 'string' && /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(d.drive) ? d.drive : '';
+    if (!api) return initWorks();
+    return fetch(api).then(function (r) { return r.ok ? r.json() : {}; }).then(function (x) {
+      (x && Array.isArray(x.works) ? x.works : []).forEach(function (w) {
+        if (driveId(w.id) && CAT[w.service] && (w.kind === 'image' || w.kind === 'video')) WORKS.push({ title: String(w.title || '').slice(0, 80), service: w.service, drive: w.id, kind: w.kind });
+      });
+    }).catch(function () {}).then(initWorks);
   }).catch(function () { initWorks(); });
 
   // lightbox
   var lb = $('#lb'), lbin = $('#lbin');
   function openLb(w) {
-    var img = safeSrc(w.image), vid = safeSrc(w.video);
-    lbin.innerHTML = vid ? '<video src="' + vid + '" controls autoplay playsinline></video>' : '<img src="' + img + '" alt="' + esc(w.title) + '">';
+    var did = driveId(w.drive), img = safeSrc(w.image), vid = safeSrc(w.video);
+    if (did) lbin.innerHTML = w.kind === 'video' ? '<iframe class="dv" src="https://drive.google.com/file/d/' + did + '/preview" allow="autoplay; fullscreen" allowfullscreen title="' + esc(w.title) + '"></iframe>' : '<img src="' + thumb(did, 2000) + '" alt="' + esc(w.title) + '" referrerpolicy="no-referrer">';
+    else lbin.innerHTML = vid ? '<video src="' + vid + '" controls autoplay playsinline></video>' : '<img src="' + img + '" alt="' + esc(w.title) + '">';
     lb.classList.add('open');
   }
   function closeLb() { lb.classList.remove('open'); lbin.innerHTML = ''; }
