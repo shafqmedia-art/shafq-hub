@@ -122,6 +122,14 @@
     else if (me() && me().role === 'client') out += '<button type="button" class="tab" data-act="msgAdmin" aria-label="راسل الإدارة">' + TI.send + '<span>راسلنا</span></button>';
     return out + '</nav>';
   }
+  function moreSheet() {
+    if (!isMgr()) return '';
+    var skip = ['#/', '#/tasks', '#/clients', '#/finance'], r = route();
+    var tiles = [];
+    NAV.forEach(function (g) { g[1].forEach(function (i) { if (i[1] && skip.indexOf(i[1]) < 0) tiles.push([i[0], i[1]]); }); });
+    tiles.push(['ملفي', '#/profile']);
+    return '<div class="more" role="dialog" aria-label="كل الأقسام"><div class="more-h"><h2>كل الأقسام</h2><button type="button" class="nav-x" data-act="moreNav" aria-label="إغلاق">' + TI.x + '</button></div><div class="more-g">' + tiles.map(function (t) { return '<a href="' + t[1] + '" class="' + (r === t[1] ? 'on' : '') + '">' + h(t[0]) + '</a>'; }).join('') + '</div></div>';
+  }
   function appbar() { return '<header class="appbar"><a class="ab-brand" href="#/" aria-label="الرئيسية"><img class="lg-w" src="' + LOGO_W + '" alt=""><img class="lg-b" src="' + LOGO_B + '" alt=""><b>شفق</b></a><span class="ab-acts">' + (isMgr() || me().role === 'client' ? '' : '<button type="button" class="ab-ic" data-act="msgAdmin" aria-label="راسل الإدارة">' + TI.send + '</button>') + bellBtn('ab-ic') + '<button type="button" class="ab-ic" data-act="theme" aria-label="تبديل الثيم">' + (document.body.classList.contains('t-light') ? TI.moon : TI.sun) + '</button><a class="ab-who" href="' + (me().role === 'client' ? '#/account' : '#/profile') + '" aria-label="حسابي">' + avatar(me()) + '</a></span></header>'; }
   function isPhone() { return window.matchMedia && window.matchMedia('(max-width:900px)').matches; }
   function route() { return location.hash || '#/'; }
@@ -154,7 +162,7 @@
     out += '<a class="who" href="#/profile" aria-label="الملف الشخصي">' + avatar(u) + '<span><b>' + h(u.name) + '</b><small>' + h(u.title || (isMgr() ? 'المدير' : 'عضو الفريق')) + ' · ملفي</small></span></a></div>';
     return out;
   }
-  function shell(content) { return appbar() + '<div class="shell"><nav class="nav" aria-label="أقسام النظام"><button type="button" class="nav-x" data-act="moreNav" aria-label="إغلاق القائمة">' + TI.x + '</button>' + navHtml() + '</nav><main' + (route() === '#/finance' ? ' class="show-top"' : '') + '>' + topHtml() + content + '</main></div>' + tabbar(); }
+  function shell(content) { return appbar() + '<div class="shell"><nav class="nav" aria-label="أقسام النظام"><button type="button" class="nav-x" data-act="moreNav" aria-label="إغلاق القائمة">' + TI.x + '</button>' + navHtml() + '</nav>' + moreSheet() + '<main' + (route() === '#/finance' ? ' class="show-top"' : '') + '>' + topHtml() + content + '</main></div>' + tabbar(); }
   function head(h1, sub, acts) { return '<div class="head"><div><h1>' + h(h1) + '</h1><p>' + h(sub) + '</p></div><div class="acts">' + (acts || '') + '</div></div>'; }
 
   /* ---------- الشاشات ---------- */
@@ -480,7 +488,7 @@
     addTask: function (d) {
       openForm('مهمة جديدة', [{ k: 'title', label: 'المهمة', req: true, wide: true }, { k: 'user_id', label: 'لمن', type: 'select', options: memberOpts(), value: me().id }, { k: 'client_id', label: 'العميل', type: 'select', options: clientOpts(), value: d.client || '' }, { k: 'due', label: 'موعد التسليم', type: 'date', value: today(), req: true }], function (v) {
         db.tasks.push({ id: uid(), title: v.title.trim(), user_id: v.user_id, client_id: v.client_id, client_name: v.client_id ? clientName(v.client_id) : '', due: v.due, done: false, done_at: '' });
-        if (v.user_id && v.user_id !== me().id) notify([{ to: [v.user_id], title: 'مهمة جديدة 📋', body: v.title.trim() + ' · التسليم ' + dateAr(v.due), tag: 'task' }]);
+        if (v.user_id && v.user_id !== me().id) notify([{ to: [v.user_id], title: 'مهمة جديدة', body: v.title.trim() + ' · التسليم ' + dateAr(v.due), tag: 'task' }]);
         return 'أُضيفت المهمة';
       });
     },
@@ -503,8 +511,8 @@
         if (svc && serviceList().indexOf(svc) < 0) { db.settings.services = (db.settings.services || []).concat([svc]); }
         if (v.dir === 'in' && v.client_id) { rcv = nextNo('RCV', v.date); db.items.push({ id: uid(), kind: 'paper', status: 'سارية', created: today(), code: 'RCV', no: rcv, name: clientName(v.client_id), amount: amt, cur: v.cur, date: v.date, move_id: mid, notes: svc }); }
         db.moves.push({ id: mid, date: v.date, dir: v.dir, cat: v.cat, amount: amt, cur: v.cur, rate: rate, usd: v.cur === 'USD' ? amt : amt / rate, note: v.note.trim(), service: svc, receipt: rcv, client_id: v.client_id, user_id: v.user_id, item_id: v.item_id || '', created_by: me().id, is_void: false });
-        if (v.dir === 'in' && v.client_id) notify([{ to: { client: v.client_id }, title: 'وصلتنا دفعتكم 🙏', body: amountTxt(amt, v.cur) + (svc ? ' عن ' + svc : '') + (rcv ? ' · وصل ' + rcv : '') + '. شكراً لثقتكم', tag: 'pay' }]);
-        if (v.dir === 'out' && v.user_id && v.user_id !== me().id) { var pu = byId('users', v.user_id) || {}; notify([{ to: [v.user_id], title: 'سجّلنا دفعة ' + (pu.gender === 'f' ? 'إلكِ' : 'إلك') + ' 💸', body: amountTxt(amt, v.cur) + (v.note.trim() ? ' · ' + v.note.trim() : ''), tag: 'pay' }]); }
+        if (v.dir === 'in' && v.client_id) notify([{ to: { client: v.client_id }, title: 'وصلتنا دفعتكم', body: amountTxt(amt, v.cur) + (svc ? ' عن ' + svc : '') + (rcv ? ' · وصل ' + rcv : '') + '. شكراً لثقتكم', tag: 'pay' }]);
+        if (v.dir === 'out' && v.user_id && v.user_id !== me().id) { var pu = byId('users', v.user_id) || {}; notify([{ to: [v.user_id], title: 'سجّلنا دفعة ' + (pu.gender === 'f' ? 'إلكِ' : 'إلك') + '', body: amountTxt(amt, v.cur) + (v.note.trim() ? ' · ' + v.note.trim() : ''), tag: 'pay' }]); }
         return rcv ? 'سُجّلت الدفعة · وصل ' + rcv : 'سُجّلت الحركة';
       }, 'الحركة بالليرة تُحوَّل إلى الدولار بسعر يومها، ويُحفظ السعر معها.');
     },
@@ -578,7 +586,47 @@
 
 
   /* ---------- الأقسام العامة (مشاريع، درون، محتوى، فريلانس، مؤثرون، محتملون، طلبات، أوراق، معدات) ---------- */
-  var mstate = { filter: {}, tag: {}, cal: '' };
+  var mstate = { filter: {}, tag: {}, cal: '', stage: {} };
+  var PSTEPS = ['تحضير', 'تصوير ومونتاج', 'موافقة العميل', 'مجدول', 'منشور'], POLD = { 'فكرة': 'تحضير', 'كتابة': 'تحضير', 'تصميم أو مونتاج': 'تصوير ومونتاج' };
+  var PNEXT = { 'تحضير': 'جاهز للتصوير', 'تصوير ومونتاج': 'ابعت للعميل', 'موافقة العميل': 'وافق عنه', 'مجدول': 'نزل' };
+  var CSTEPS = ['عم نحضّر', 'بانتظارك', 'جاهز', 'نزل'];
+  function pst(s) { return POLD[s] || (PSTEPS.indexOf(s) >= 0 ? s : 'تحضير'); }
+  function cstep(s) { s = pst(s); return s === 'منشور' ? 3 : s === 'مجدول' ? 2 : s === 'موافقة العميل' ? 1 : 0; }
+  function track(i, labels, mini) { return '<ol class="track' + (mini ? ' mini' : '') + '" aria-label="المرحلة: ' + h(labels[i]) + '">' + labels.map(function (l, j) { return '<li class="' + (j < i ? 'done' : j === i ? 'cur' : '') + '"><i></i><span>' + h(l) + '</span></li>'; }).join('') + '</ol>'; }
+  function safeLink(u) { u = String(u || '').trim(); return /^https:\/\/[^\s"'<>]+$/i.test(u) ? u : ''; }
+  function flowView(key, m, all) {
+    var cnt = {}; PSTEPS.forEach(function (s) { cnt[s] = 0; }); all.forEach(function (x) { cnt[pst(x.status)]++; });
+    var cur = mstate.stage[key] || PSTEPS.filter(function (s) { return s !== 'منشور' && cnt[s]; })[0] || PSTEPS[0];
+    var c = '<nav class="ftabs" role="tablist" aria-label="المراحل">' + PSTEPS.map(function (s) { var on = s === cur; return '<button type="button" role="tab" aria-selected="' + on + '" class="' + (on ? 'on' : '') + '" data-act="fstage" data-mod="' + key + '" data-v="' + h(s) + '"><span>' + h(s) + '</span><b>' + cnt[s] + '</b></button>'; }).join('') + '</nav>';
+    var list = all.filter(function (x) { return pst(x.status) === cur; }).sort(function (a, b) { return ((a.date || '9') + (a.time || '')) < ((b.date || '9') + (b.time || '')) ? -1 : 1; });
+    if (cur === 'منشور') list.reverse();
+    c += list.length ? '<div class="fgrid">' + list.map(flowCard).join('') + '</div>' : '<p class="empty">' + (cur === 'موافقة العميل' ? 'ما في شي بانتظار رد العملاء.' : 'ما في شي بهالمرحلة.') + '</p>';
+    return c;
+  }
+  function flowCard(it) {
+    var s = pst(it.status), i = PSTEPS.indexOf(s), nx = PNEXT[s], meta = [it.type, it.client_id ? clientName(it.client_id) : '', it.date ? dateAr(it.date) + (it.time ? ' ' + it.time : '') : ''].filter(Boolean).join(' · ');
+    var note = s === 'موافقة العميل' ? '<p class="fnote wait">بانتظار رد العميل' + (it.sent_at ? ' من ' + h(dateAr(it.sent_at)) : '') + '</p>' : (it.review_note && s === 'تصوير ومونتاج' ? '<p class="fnote"><b>ملاحظة العميل:</b> ' + h(it.review_note) + '</p>' : '');
+    return '<article class="fcard"><b class="ft">' + h(it.name) + '</b><span class="mu">' + h(meta) + '</span>' + track(i, PSTEPS, true) + note +
+      (nx ? btn(s === 'تصوير ومونتاج' && !it.client_id ? 'جاهز للنشر' : nx, 'pstep', { id: it.id, d: 1 }, 'pri fgo') : '') +
+      '<div class="flinks">' + (i > 0 ? btn('رجوع خطوة', 'pstep', { id: it.id, d: -1 }, 'lnk') : '') + btn('تعديل', 'editItem', { mod: 'content', id: it.id }, 'lnk') + btn('حذف', 'delItem', { id: it.id }, 'lnk') + '</div></article>';
+  }
+  function reviewCard(p) {
+    var link = safeLink(p.preview);
+    return '<article class="rcard"><div><b>' + h(p.name || 'منشور') + '</b><span class="mu">' + h([p.type, p.date ? 'ينزل ' + dateAr(p.date) : ''].filter(Boolean).join(' · ')) + '</span></div>' +
+      (link ? '<a class="btn rprev" target="_blank" rel="noopener noreferrer" href="' + h(link) + '">شوف المعاينة</a>' : '') + (p.caption ? '<p class="rcap">' + h(p.caption) + '</p>' : '') +
+      '<div class="racts">' + btn('موافق', 'review', { id: p.id }, 'pri') + btn('بدي تعديل', 'reviewEdit', { id: p.id }) + '</div></article>';
+  }
+  function portalPost(id) { var d = ONLINE ? pstate.data : portalLocal(me().client_id); return d ? (d.posts || []).filter(function (p) { return p.id === id; })[0] : null; }
+  function clientReview(id, ok, note) {
+    var p = portalPost(id) || {}, msg = ok ? 'وصلت موافقتك، شكراً' : 'وصلت ملاحظتك، رح نعدّل ونرجعلك';
+    if (!ONLINE) { var it = byId('items', id); if (it) { it.status = ok ? 'مجدول' : 'تصوير ومونتاج'; it.review_note = note || ''; save(); } render(); if (ok) toast(msg); return msg; }
+    return SRV.rpc('client_review', { p_id: id, p_ok: ok, p_note: note || null }).then(function () {
+      var cname = pstate.data && pstate.data.client ? pstate.data.client.name : me().name;
+      SRV.notify([{ to: 'managers', title: (ok ? 'وافق ' : 'طلب تعديل من ') + cname, body: '«' + (p.name || '') + '»' + (note ? ' · ' + note : ''), tag: 'review-' + id, url: './#/m/content' }]);
+      pstate.data = null; render(); if (ok) toast(msg); return msg;
+    }, function (e) { var m = /client_review|function/i.test(e.message || '') ? 'الموافقة لسا ما تفعّلت على السيرفر.' : 'ما قدرنا نبعت، جرّب مرة تانية.'; if (ok) { toast(m); return; } return { err: m }; });
+  }
+
   function items(kind) { return db.items.filter(function (x) { return x.kind === kind; }); }
   function itemMoney(id) { var mv = db.moves.filter(function (m) { return live(m) && m.item_id === id; }); return { inc: sum(mv.filter(function (m) { return m.dir === 'in'; }), function (m) { return m.usd; }), out: sum(mv.filter(function (m) { return m.dir === 'out'; }), function (m) { return m.usd; }) }; }
   function itemOpts() { return [['', 'غير مربوط']].concat(db.items.filter(function (x) { return (x.kind === 'project' || x.kind === 'drone') && x.status !== 'منتهٍ'; }).map(function (x) { return [x.id, (x.kind === 'drone' ? 'درون: ' : 'مشروع: ') + x.name]; })); }
@@ -608,9 +656,9 @@
       rows: function (it) { return [['المنطقة', h(it.area || 'غير محددة')], ['الطيار', h(it.pilot ? userName(it.pilot) : 'غير محدد')], ['الدرون', h(it.model || 'غير محددة')], ['التصريح', h(it.permit || 'لا يلزم')]].concat(moneyRows(it)); },
       acts: function (it) { return (it.phone ? '<a class="btn sm" target="_blank" rel="noopener" href="' + h(waTo(it.phone, 'السلام عليكم ورحمة الله، معكم شفق ميديا بخصوص طلب تصوير الدرون.')) + '">واتساب العميل</a>' : '') + btn('+ حركة مالية', 'addMove', { item: it.id }, 'sm'); },
       kpis: function (l) { var mon = monthOf(today()), t = today(), ml = l.filter(function (x) { return monthOf(x.created || x.date || '') === mon; }); var inc = sum(db.moves.filter(function (m) { return live(m) && m.dir === 'in' && monthOf(m.date) === mon && m.item_id && (byId('items', m.item_id) || {}).kind === 'drone'; }), function (m) { return m.usd; }); return kpi('طلبات الشهر', String(ml.length), true, 'الهدف 100') + kpi('طلعات اليوم', String(l.filter(function (x) { return x.date === t && x.status !== 'منتهٍ'; }).length)) + kpi('بانتظار التصريح', String(l.filter(function (x) { return x.permit === 'بانتظار الموافقة' && x.status !== 'منتهٍ'; }).length)) + kpi('دخل الدرون', usd(inc), false, 'هذا الشهر'); } },
-    content: { title: 'خط إنتاج المحتوى', sub: 'كل منشور من الفكرة إلى النشر', kind: 'post', add: '+ منشور جديد', board: true,
-      statuses: ['فكرة', 'كتابة', 'تصميم أو مونتاج', 'موافقة العميل', 'مجدول', 'منشور'],
-      fields: function () { return [{ k: 'name', label: 'عنوان المنشور', req: true }, { k: 'client_id', label: 'العميل', type: 'select', options: clientOpts() }, { k: 'type', label: 'النوع', type: 'select', options: sel(['بوست', 'ريل', 'كاروسيل', 'ستوري', 'منشور الجمعة']) }, { k: 'owner', label: 'المسؤول', type: 'select', options: memberOpts('غير محدد') }, { k: 'date', label: 'موعد النشر', type: 'date' }, { k: 'time', label: 'ساعة النشر', type: 'time' }, { k: 'notes', label: 'ملاحظات', type: 'area', wide: true }]; },
+    content: { title: 'خط إنتاج المحتوى', sub: 'كل منشور من الفكرة إلى النشر', kind: 'post', add: '+ منشور جديد', flow: true,
+      statuses: PSTEPS,
+      fields: function () { return [{ k: 'name', label: 'عنوان المنشور', req: true }, { k: 'client_id', label: 'العميل', type: 'select', options: clientOpts() }, { k: 'type', label: 'النوع', type: 'select', options: sel(['بوست', 'ريل', 'كاروسيل', 'ستوري', 'منشور الجمعة']) }, { k: 'owner', label: 'المسؤول', type: 'select', options: memberOpts('غير محدد') }, { k: 'date', label: 'موعد النشر', type: 'date' }, { k: 'time', label: 'ساعة النشر', type: 'time' }, { k: 'preview', label: 'رابط المعاينة للعميل (درايف أو صورة)', type: 'url', wide: true, ph: 'https://' }, { k: 'caption', label: 'الكابشن', type: 'area', wide: true }, { k: 'notes', label: 'ملاحظات داخلية (ما بيشوفها العميل)', type: 'area', wide: true }]; },
       summary: function (it) { return h(it.type || '') + ' · ' + h(it.client_id ? clientName(it.client_id) : 'عام') + (it.date ? ' · ' + h(dateAr(it.date)) : ''); },
       kpis: function (l) { return kpi('قيد العمل', String(l.filter(function (x) { return x.status !== 'منشور'; }).length)) + kpi('بانتظار موافقة العميل', String(l.filter(function (x) { return x.status === 'موافقة العميل'; }).length), true) + kpi('مجدول', String(l.filter(function (x) { return x.status === 'مجدول'; }).length)) + kpi('نُشر هذا الشهر', String(l.filter(function (x) { return x.status === 'منشور' && monthOf(x.date || '') === monthOf(today()); }).length)); } },
     talent: { title: 'فريلانس', sub: 'قاعدة بيانات الفريلانسرز للمشاريع القادمة', kind: 'talent', add: '+ فريلانسر', tagField: 'skills', tagLabel: 'الاختصاص',
@@ -664,6 +712,7 @@
     var m = MODS[key], all = items(m.kind), f = mstate.filter[key] || '', tg = mstate.tag[key] || '';
     var c = head(m.title, m.sub, (key === 'content' ? btn('تحميل قالب إكسل', 'xlTemplate') + '<label class="btn" for="xlfile">رفع ملف إكسل</label><input id="xlfile" type="file" accept=".xlsx" data-chg="xlfile" hidden>' : '') + btn(m.add, 'addItem', { mod: key }, 'pri'));
     if (ONLINE && SRV.itemsMissing && SRV.itemsMissing()) c += '<p class="warn">هذا القسم يحتاج تحديث قاعدة البيانات: شغّل ملف schema2.sql في Supabase (SQL Editor) مرة واحدة ثم أعد فتح التطبيق.</p>';
+    if (m.flow) return shell(c + flowView(key, m, all));
     c += '<div class="kpis">' + m.kpis(all) + '</div>';
     var list = all.filter(function (x) { return (!f || x.status === f) && (!tg || tags(x[m.tagField]).indexOf(tg) >= 0); });
     if (m.tagField) c += chipRow(m.tagLabel, [['', 'الكل']].concat(allTags(all, m.tagField).map(function (t) { return [t, t]; })), tg, 'mtag', key);
@@ -698,6 +747,27 @@
     voidPaper: function (d) { if (!confirm('إلغاء الورقة؟ تبقى في السجل برقمها.')) return; byId('items', d.id).status = 'ملغاة'; save(); render(); toast('أُلغيت الورقة'); },
     mfilter: function (d) { mstate.filter[d.mod] = d.v; render(); },
     mtag: function (d) { mstate.tag[d.mod] = d.v; render(); },
+    fstage: function (d) { mstate.stage[d.mod] = d.v; render(); },
+    pstep: function (d) {
+      var it = byId('items', d.id); if (!it) return;
+      var s = pst(it.status), fw = +d.d > 0, i = PSTEPS.indexOf(s) + (fw ? 1 : -1); if (i < 0 || i >= PSTEPS.length) return;
+      var to = PSTEPS[i];
+      if (to === 'موافقة العميل' && !it.client_id) to = fw ? 'مجدول' : 'تصوير ومونتاج';
+      if (fw && to === 'موافقة العميل' && !safeLink(it.preview) && !confirm('ما في رابط معاينة. العميل رح يشوف العنوان والكابشن بس. نبعت؟')) return;
+      if (fw && s === 'موافقة العميل' && !confirm('توافق عن العميل وتنقل المنشور لمجدول؟')) return;
+      it.status = to; if (to === 'موافقة العميل') { it.review_note = ''; it.sent_at = today(); }
+      save(); render(); toast(to === 'موافقة العميل' ? 'انبعت للعميل' : 'صار: ' + to);
+      if (fw && it.client_id && to === 'موافقة العميل') notify([{ to: { client: it.client_id }, title: 'محتوى بانتظار موافقتك', body: '«' + (it.name || '') + '»' + (it.type ? ' · ' + it.type : ''), tag: 'review', url: './#/' }]);
+      if (fw && it.client_id && to === 'منشور') notify([{ to: { client: it.client_id }, title: 'نزل منشور جديد', body: '«' + (it.name || '') + '»' + (it.type ? ' · ' + it.type : ''), tag: 'post' }]);
+    },
+    review: function (d) { if (me().role !== 'client') return; clientReview(d.id, true, ''); },
+    reviewEdit: function (d) {
+      if (me().role !== 'client') return; var p = portalPost(d.id);
+      openForm('بدك تعديل؟', [{ k: 'note', label: 'شو بدك نعدّل؟', type: 'area', wide: true, req: true }], function (v) {
+        var n = String(v.note || '').trim(); if (!n) return { err: 'اكتب شو بدك نعدّل.' }; if (n.length > 500) return { err: 'خليها أقصر من 500 حرف.' };
+        return clientReview(d.id, false, n);
+      }, p ? '«' + (p.name || '') + '»' : '', 'ابعت الملاحظة');
+    },
     lead2client: function (d) { var l = byId('items', d.id); if (!confirm('تحويل «' + l.name + '» إلى عميل؟')) return; db.clients.push({ id: uid(), name: l.name, kind: 'page', value: num(l.value), months: 0, start_date: today(), notes: l.notes || '', roles: [{ role: '', user: '' }] }); l.status = 'صار عميلاً'; save(); render(); toast('صار عميلاً'); },
     calPrev: function () { mstate.cal = addMonths(calMonth() + '-15', -1).slice(0, 7); render(); },
     calNext: function () { mstate.cal = addMonths(calMonth() + '-15', 1).slice(0, 7); render(); },
@@ -801,7 +871,7 @@
     var c = byId('clients', cid) || {};
     return { client: { name: c.name, kind: c.kind, value: c.value, months: c.months, start_date: c.start_date },
       payments: db.moves.filter(function (m) { return live(m) && m.client_id === cid && m.dir === 'in'; }).map(function (m) { return { date: m.date, service: m.service, usd: m.usd, amount: m.amount, cur: m.cur, receipt: m.receipt }; }),
-      posts: db.items.filter(function (x) { return x.kind === 'post' && x.client_id === cid; }).map(function (x) { return { name: x.name, type: x.type, date: x.date, time: x.time, status: x.status }; }),
+      posts: db.items.filter(function (x) { return x.kind === 'post' && x.client_id === cid; }).map(function (x) { return { id: x.id, name: x.name, type: x.type, date: x.date, time: x.time, status: pst(x.status), preview: x.preview, caption: x.caption, note: x.review_note }; }),
       phone: db.settings.shafq_phone || (db.users.filter(function (u) { return u.role === 'manager'; })[0] || {}).phone || '' };
   }
   var pstate = { data: null, loading: false, err: '', month: '' };
@@ -815,6 +885,7 @@
   }
   function postState(p, now) {
     if (p.status === 'منشور') return ['done', 'نزل'];
+    if (pst(p.status) === 'موافقة العميل') return ['wait', 'بانتظار موافقتك'];
     var due = p.date ? new Date(p.date + 'T' + (p.time || '23:59') + ':00') : null;
     if (due && due < now) { var dd = Math.floor((now - due) / 86400000); return ['late', dd >= 1 ? 'متأخر ' + (dd === 1 ? 'يوم' : dd === 2 ? 'يومين' : dd + ' أيام') : 'متأخر']; }
     if (p.status === 'مجدول') return ['ready', 'جاهز للنشر'];
@@ -875,10 +946,12 @@
       sec += '<div class="acts">' + btn('تسجيل الخروج', 'logout') + '</div>';
     }
     else {
-      var allP = d.posts || [], upc = allP.filter(function (p) { return (p.date || '') >= t && p.status !== 'منشور'; }).sort(function (a, b) { return ((a.date || '') + (a.time || '')) < ((b.date || '') + (b.time || '')) ? -1 : 1; }).slice(0, 3);
+      var allP = d.posts || [], upc = allP.filter(function (p) { return (p.date || '') >= t && p.status !== 'منشور' && pst(p.status) !== 'موافقة العميل'; }).sort(function (a, b) { return ((a.date || '') + (a.time || '')) < ((b.date || '') + (b.time || '')) ? -1 : 1; }).slice(0, 3);
       var dayName; try { dayName = new Intl.DateTimeFormat('ar-SY-u-nu-latn', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date()); } catch (x) { dayName = dateAr(t); }
       sec = pushBanner() + '<div class="hello"><h1>' + greet() + '، ' + h(cl.name || '') + '</h1><p class="mu">' + h(dayName) + '</p></div>';
-      sec += '<section class="sbox"><h2>الجاي على صفحتك</h2>' + simpleList(upc.map(function (p) { var rel = p.date === t ? 'اليوم' : p.date === addDays(t, 1) ? 'بكرة' : dateAr(p.date); return '<div class="sline"><span class="s-main"><b>' + h(p.name || p.type || 'منشور') + '</b><small>' + h(rel) + (p.time ? ' · ' + h(p.time) : '') + '</small></span></div>'; }), 'ما في منشورات قادمة.') + '</section>';
+      var waitP = allP.filter(function (p) { return pst(p.status) === 'موافقة العميل'; });
+      if (waitP.length) sec += '<section class="sbox review"><h2>بانتظار موافقتك <b class="cnt">' + waitP.length + '</b></h2>' + waitP.map(reviewCard).join('') + '</section>';
+      sec += '<section class="sbox"><h2>الجاي على صفحتك</h2>' + simpleList(upc.map(function (p) { var rel = p.date === t ? 'اليوم' : p.date === addDays(t, 1) ? 'بكرة' : dateAr(p.date); return '<div class="sline"><span class="s-main"><b>' + h(p.name || p.type || 'منشور') + '</b><small>' + h(rel) + (p.time ? ' · ' + h(p.time) : '') + '</small>' + track(cstep(p.status), CSTEPS) + '</span></div>'; }), 'ما في منشورات قادمة.') + '</section>';
       if (next) sec += '<div class="slist"><a class="sline link" href="#/account"><span class="s-main"><b>الدفعة الجاية</b><small>' + h(dateAr(next.date)) + ' · <span class="ltr">' + h(usd(next.usd)) + '</span>' + (daysTo(next.date) < 0 ? ' · <em class="late">متأخرة</em>' : '') + '</small></span>' + CHEV + '</a></div>';
     }
     var ptabs = '<nav class="ptabs" aria-label="أقسام البوابة">' + CTABS.map(function (x) { var on = (r === x[1]) || (x[1] === '#/' && r !== '#/content' && r !== '#/account'); return '<a href="' + x[1] + '" class="' + (on ? 'on' : '') + '">' + x[0] + '</a>'; }).join('') + '</nav>';
@@ -922,8 +995,8 @@
   function pushBanner() {
     var st = pushStatus();
     try { if (localStorage.getItem('shafq_push_later') === today()) return ''; } catch (e) {}
-    if (st === 'default') return '<div class="pushbar"><span>🔔 فعّل الإشعارات لتوصلك المهام والدفعات وتحية الصبح والمسا على جهازك.</span><span class="acts">' + btn('تفعيل الإشعارات', 'pushOn', {}, 'pri') + btn('لاحقاً', 'pushLater') + '</span></div>';
-    if (st === 'ios') return '<div class="pushbar"><span>🔔 على الآيفون: من زر المشاركة اختر «إضافة إلى الشاشة الرئيسية»، وافتح النظام من الأيقونة لتقدر تفعّل الإشعارات.</span><span class="acts">' + btn('تمام', 'pushLater') + '</span></div>';
+    if (st === 'default') return '<div class="pushbar"><span> فعّل الإشعارات لتوصلك المهام والدفعات وتحية الصبح والمسا على جهازك.</span><span class="acts">' + btn('تفعيل الإشعارات', 'pushOn', {}, 'pri') + btn('لاحقاً', 'pushLater') + '</span></div>';
+    if (st === 'ios') return '<div class="pushbar"><span> على الآيفون: من زر المشاركة اختر «إضافة إلى الشاشة الرئيسية»، وافتح النظام من الأيقونة لتقدر تفعّل الإشعارات.</span><span class="acts">' + btn('تمام', 'pushLater') + '</span></div>';
     return '';
   }
   function pushTile() {
@@ -938,11 +1011,11 @@
       if (pushStatus() !== 'default') { render(); return; }
       Notification.requestPermission().then(function (p) {
         if (p !== 'granted') { toast('ما انسمح بالإشعارات'); render(); return; }
-        return pushSub(true).then(function () { pushSynced = true; toast('تفعّلت الإشعارات 🔔'); render(); });
+        return pushSub(true).then(function () { pushSynced = true; toast('تفعّلت الإشعارات'); render(); });
       }).catch(function (e) { toast('تعذر تفعيل الإشعارات: ' + (e && e.message || e)); render(); });
     },
     pushLater: function () { try { localStorage.setItem('shafq_push_later', today()); } catch (e) {} render(); },
-    pushTest: function () { pushSub(true).then(function () { return SRV.notify([{ to: [me().id], title: 'أهلاً ' + (me().gender === 'f' ? 'أستاذة ' : 'أستاذ ') + me().name + ' 🔔', body: 'الإشعارات شغالة على هذا الجهاز.' }]); }).then(function (r) {
+    pushTest: function () { pushSub(true).then(function () { return SRV.notify([{ to: [me().id], title: 'أهلاً ' + (me().gender === 'f' ? 'أستاذة ' : 'أستاذ ') + me().name + '', body: 'الإشعارات شغالة على هذا الجهاز.' }]); }).then(function (r) {
         if (r && r.sent) return toast('انبعت الإشعار ✓');
         var why = !r ? 'ما قدرت أوصل لدالة push بـ Supabase.' : r.errors && r.errors.length ? 'السبب: ' + r.errors.join(' | ') : !r.subs ? 'هالجهاز مو محفوظ بقاعدة البيانات. تأكد إنك شغّلت schema4.sql، وبعدين اكبس تفعيل من جديد.' : 'ما وصل لسبب مو معروف.';
         if (r && r.key && PUSH_KEY.slice(0, 12) !== r.key) why = 'المفتاح VAPID_PUBLIC بـ Supabase مو نفس مفتاح النظام. انسخه من جديد من push-secrets.txt.';
@@ -957,19 +1030,19 @@
     if (cl) {
       var paid = sum(db.moves.filter(function (m) { return live(m) && m.client_id === cl.id && m.dir === 'in'; }), function (m) { return m.usd; }), nx = schedule(cl, paid)[0];
       return [
-        ['what', 'شو صار معكم؟', 'شو صار معكم؟ 👀', 'السلام عليكم ' + sr + '، حبينا نطمّن عليكم ونشوف إذا في شي بدكم ياه منا.'],
-        ['due', 'تذكير بالدفعة الجاية', 'تذكير بالدفعة 🗓️', sr + '، تذكير لطيف: الدفعة الجاية' + (nx ? ' بتاريخ ' + dateAr(nx.date) + ' بقيمة ' + usd(nx.usd) : '') + '. شكراً لتعاونكم.'],
-        ['got', 'وصلتنا دفعتكم', 'وصلتنا دفعتكم 🙏', sr + '، وصلتنا الدفعة، شكراً لثقتكم.'],
-        ['approve', 'محتوى بانتظار موافقتكم', 'بانتظار موافقتكم ✍️', sr + '، في محتوى جاهز وبانتظار موافقتكم. فوتوا على البوابة وشوفوه.'],
-        ['plan', 'خطة الشهر جاهزة', 'خطة النشر جاهزة 📅', sr + '، خطة النشر لهالشهر صارت جاهزة على البوابة.']
+        ['what', 'شو صار معكم؟', 'شو صار معكم؟', 'السلام عليكم ' + sr + '، حبينا نطمّن عليكم ونشوف إذا في شي بدكم ياه منا.'],
+        ['due', 'تذكير بالدفعة الجاية', 'تذكير بالدفعة', sr + '، تذكير لطيف: الدفعة الجاية' + (nx ? ' بتاريخ ' + dateAr(nx.date) + ' بقيمة ' + usd(nx.usd) : '') + '. شكراً لتعاونكم.'],
+        ['got', 'وصلتنا دفعتكم', 'وصلتنا دفعتكم', sr + '، وصلتنا الدفعة، شكراً لثقتكم.'],
+        ['approve', 'محتوى بانتظار موافقتكم', 'بانتظار موافقتكم', sr + '، في محتوى جاهز وبانتظار موافقتكم. فوتوا على البوابة وشوفوه.'],
+        ['plan', 'خطة الشهر جاهزة', 'خطة النشر جاهزة', sr + '، خطة النشر لهالشهر صارت جاهزة على البوابة.']
       ];
     }
     return [
-      ['what', 'شو صار مع' + k + '؟', 'شو صار مع' + k + '؟ 👀', 'السلام عليكم ' + sr + '، حبيت أطمّن شو صار مع' + k + ' بالشغل. يعطي' + k + ' العافية.'],
-      ['paid', 'وصل' + k + ' الدفع؟', 'وصل' + k + ' الدفع؟ 💸', sr + '، سجّلنا دفعة إل' + k + '. طمّني إذا وصلت' + k + '.'],
-      ['task', 'عند' + k + ' مهمة جديدة', 'مهمة جديدة 📋', sr + '، في مهمة جديدة إل' + k + ' على النظام، فوت' + (f ? 'ي' : '') + ' شوفها.'],
-      ['due', 'تذكير بموعد التسليم', 'تذكير بالتسليم ⏰', sr + '، تذكير بموعد تسليم مهام' + k + '. إذا في شي معطّل' + k + ' خبّرني.'],
-      ['thanks', 'يعطي' + k + ' العافية', 'يعطي' + k + ' العافية 🌟', sr + '، شكراً على شغل' + k + '، يعطي' + k + ' العافية.']
+      ['what', 'شو صار مع' + k + '؟', 'شو صار مع' + k + '؟', 'السلام عليكم ' + sr + '، حبيت أطمّن شو صار مع' + k + ' بالشغل. يعطي' + k + ' العافية.'],
+      ['paid', 'وصل' + k + ' الدفع؟', 'وصل' + k + ' الدفع؟', sr + '، سجّلنا دفعة إل' + k + '. طمّني إذا وصلت' + k + '.'],
+      ['task', 'عند' + k + ' مهمة جديدة', 'مهمة جديدة', sr + '، في مهمة جديدة إل' + k + ' على النظام، فوت' + (f ? 'ي' : '') + ' شوفها.'],
+      ['due', 'تذكير بموعد التسليم', 'تذكير بالتسليم', sr + '، تذكير بموعد تسليم مهام' + k + '. إذا في شي معطّل' + k + ' خبّرني.'],
+      ['thanks', 'يعطي' + k + ' العافية', 'يعطي' + k + ' العافية', sr + '، شكراً على شغل' + k + '، يعطي' + k + ' العافية.']
     ];
   }
   function sendNoteForm(u, cl) {
@@ -980,7 +1053,7 @@
     ], function (v) {
       var p = ps.filter(function (x) { return x[0] === v.kind; })[0], body = String(v.text || '').trim();
       if (!body) return { err: 'اكتب نص الرسالة.' };
-      return SRV.notify([{ to: to, title: p ? p[2] : 'رسالة من شفق ميديا 💬', body: body, tag: 'note' }]).then(function (r) {
+      return SRV.notify([{ to: to, title: p ? p[2] : 'رسالة من شفق ميديا', body: body, tag: 'note' }]).then(function (r) {
         if (r && r.sent) return 'انبعت الإشعار ✓';
         return { err: r ? 'ما وصل: ' + (cl ? 'العميل' : (u.gender === 'f' ? 'هي' : 'هو')) + ' لسا ما فعّل الإشعارات على جهازه. فيك تبعتله واتساب بدالها.' : 'تعذر الإرسال. تأكد من الإنترنت ومن دالة push.' };
       });
@@ -1129,7 +1202,7 @@
       var name = String(g('العنوان')).trim(); if (!name) return;
       var cl = findBy(db.clients, g('العميل'), function (x) { return x.name; }), ow = findBy(team, g('المسؤول'), function (x) { return x.name; });
       var type = findBy(XL_TYPES, g('النوع'), function (x) { return x; }) || (String(g('النوع')).trim() || 'بوست');
-      var st = findBy(MODS.content.statuses, g('الحالة'), function (x) { return x; }) || 'فكرة';
+      var st = findBy(MODS.content.statuses, g('الحالة'), function (x) { return x; }) || 'تحضير';
       var date = xlDate(g('التاريخ')), time = xlTime(g('الساعة'));
       if (g('العميل') !== '' && !cl) warn.push('سطر ' + line + ': العميل «' + g('العميل') + '» مو موجود، انضاف بدون عميل');
       if (g('المسؤول') !== '' && !ow) warn.push('سطر ' + line + ': «' + g('المسؤول') + '» مو من الفريق');
@@ -1165,14 +1238,14 @@
     if (a === 'forgotOpen') { fstate = { open: true, sent: false, phone: (document.getElementById('l_phone') || {}).value || '', wa: '' }; render(); return; }
     if (a === 'forgotClose') { fstate.open = false; fstate.sent = false; render(); return; }
     if (!acts[a]) return;
-    if (!isMgr() && ['close', 'theme', 'logout', 'retry', 'delPhoto', 'chPass', 'portalRefresh', 'portalMonth', 'pushOn', 'pushLater', 'pushTest', 'moreNav', 'msgAdmin'].indexOf(a) < 0) return;
+    if (!isMgr() && ['close', 'theme', 'logout', 'retry', 'delPhoto', 'chPass', 'portalRefresh', 'portalMonth', 'pushOn', 'pushLater', 'pushTest', 'moreNav', 'msgAdmin', 'review', 'reviewEdit'].indexOf(a) < 0) return;
     acts[a](el.dataset);
   });
   document.addEventListener('change', function (e) {
     var el = e.target, k = el.getAttribute && el.getAttribute('data-chg'); if (!k) return;
     if (k === 'rate' && isMgr()) { var r = num(el.value); if (r > 0) { db.rates[today()] = r; toast('حُفظ سعر الصرف'); } else delete db.rates[today()]; save(); render(); }
-    if (k === 'task') { var t = byId('tasks', el.dataset.id); if (t && (isMgr() || t.user_id === me().id)) { t.done = el.checked; t.done_at = el.checked ? today() : ''; save(); render(); if (el.checked && !isMgr()) notify([{ to: 'managers', title: (me().gender === 'f' ? 'أنجزت ' : 'أنجز ') + me().name + ' مهمة ✅', body: t.title, tag: 'done' }]); } }
-    if (k === 'istatus' && isMgr()) { var it = byId('items', el.dataset.id); if (it) { var was = it.status; it.status = el.value; save(); render(); if (it.kind === 'post' && el.value === 'منشور' && was !== 'منشور' && it.client_id) notify([{ to: { client: it.client_id }, title: 'نزل منشور جديد 🎉', body: '«' + (it.name || '') + '»' + (it.type ? ' · ' + it.type : ''), tag: 'post' }]); } }
+    if (k === 'task') { var t = byId('tasks', el.dataset.id); if (t && (isMgr() || t.user_id === me().id)) { t.done = el.checked; t.done_at = el.checked ? today() : ''; save(); render(); if (el.checked && !isMgr()) notify([{ to: 'managers', title: (me().gender === 'f' ? 'أنجزت ' : 'أنجز ') + me().name + ' مهمة', body: t.title, tag: 'done' }]); } }
+    if (k === 'istatus' && isMgr()) { var it = byId('items', el.dataset.id); if (it) { var was = it.status; it.status = el.value; save(); render(); if (it.kind === 'post' && el.value === 'منشور' && was !== 'منشور' && it.client_id) notify([{ to: { client: it.client_id }, title: 'نزل منشور جديد', body: '«' + (it.name || '') + '»' + (it.type ? ' · ' + it.type : ''), tag: 'post' }]); } }
     if ((k === 'rolename' || k === 'roleuser') && isMgr()) { var c = byId('clients', el.dataset.id), rs = normRoles(c).slice(), i = +el.dataset.i; rs[i] = Object.assign({}, rs[i]); rs[i][k === 'rolename' ? 'role' : 'user'] = k === 'rolename' ? el.value.trim() : el.value; c.roles = rs; save(); render(); }
     if (k === 'shafqph' && isMgr()) { db.settings.shafq_phone = el.value.trim(); save(); render(); toast('حُفظ رقم شفق'); }
     if (k === 'xlfile' && isMgr() && el.files[0]) { var xf = el.files[0]; el.value = ''; if (!/\.xlsx$/i.test(xf.name) || xf.size > 5 * 1024 * 1024) { toast('ارفع ملف إكسل .xlsx حجمه أقل من 5 ميغا'); return; } importPlan(xf); }

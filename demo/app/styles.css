@@ -346,3 +346,60 @@ em.late{font-style:normal;color:var(--bad);font-weight:700}
 .kpi{transition:transform .45s cubic-bezier(.65,0,.35,1)}
 @media (hover:hover){.kpi:hover{transform:translateY(-3px)}}
 @media (prefers-reduced-motion:reduce){.enter main>*,.enter .portal>*,.enter .slist .sline,#modal .dlg,#modal:not([hidden]),.nbadge,.tab.on svg{animation:none!important}#toast{transition:none}.sline:active,.btn:active,.ab-ic:active,.tab:active svg{transform:none}}
+
+/* ===== قائمة المزيد (موبايل) ===== */
+.more{display:none}
+@media (max-width:900px){
+  body.navopen .nav{display:none!important}
+  body.navopen .more{display:flex;flex-direction:column;gap:16px;position:fixed;inset:0;z-index:70;overflow-y:auto;overscroll-behavior:contain;background:var(--bg);padding:calc(16px + env(safe-area-inset-top)) 16px calc(96px + env(safe-area-inset-bottom));animation:sheetIn .45s cubic-bezier(.65,0,.35,1)}
+  .more-h{display:flex;align-items:center;justify-content:space-between}
+  .more-h h2{font-size:22px;font-weight:900}
+  .more-h .nav-x{margin:0}
+  .more-g{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .more-g a{display:flex;align-items:center;min-height:64px;padding:12px 14px;background:var(--p);border:1px solid var(--ln);border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;transition:background .45s cubic-bezier(.65,0,.35,1),transform .2s cubic-bezier(.65,0,.35,1)}
+  .more-g a:active{transform:scale(.98)}
+  .more-g a.on{background:var(--ac);color:var(--onac);border-color:var(--ac)}
+  .more-g a{animation:rise .45s cubic-bezier(.65,0,.35,1) both}
+  .more-g a:nth-child(n+3){animation-delay:.03s}.more-g a:nth-child(n+5){animation-delay:.06s}.more-g a:nth-child(n+7){animation-delay:.09s}.more-g a:nth-child(n+9){animation-delay:.12s}
+}
+@media (prefers-reduced-motion:reduce){body.navopen .more,.more-g a{animation:none}}
+
+/* ---------- خط المحتوى: مراحل + موافقة العميل ---------- */
+.ftabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.ftabs::-webkit-scrollbar{display:none}
+.ftabs button{flex:1 0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:48px;padding:0 14px;border:1px solid var(--ln);border-radius:8px;background:var(--p);color:var(--mu);font:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:background .45s cubic-bezier(.65,0,.35,1),color .45s cubic-bezier(.65,0,.35,1),border-color .45s cubic-bezier(.65,0,.35,1)}
+.ftabs button b{min-width:24px;height:24px;padding:0 6px;border-radius:6px;background:var(--p2);color:var(--tx);font-size:12.5px;display:inline-flex;align-items:center;justify-content:center}
+.ftabs button.on{background:var(--ac);border-color:var(--ac);color:var(--onac)}
+.ftabs button.on b{background:var(--onac);color:var(--ac)}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.fcard{background:var(--p);border:1px solid var(--ln);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.enter .fcard,.enter .rcard{animation:rise .5s cubic-bezier(.65,0,.35,1) both}
+.fcard .ft{font-size:16px;font-weight:800;line-height:1.5}
+.fcard>.mu{font-size:13px;margin-top:-6px}
+.fnote{font-size:13px;background:var(--p2);border-radius:8px;padding:8px 10px;line-height:1.6}
+.fnote.wait{color:var(--mu)}
+.btn.fgo{width:100%}
+.flinks{display:flex;gap:4px;justify-content:flex-start;margin:-4px -8px -6px}
+.btn.lnk{min-height:34px;padding:0 8px;border:0;background:none;color:var(--mu);font-size:13px;font-weight:700}
+.btn.lnk:hover{color:var(--tx)}
+.track{list-style:none;display:flex;gap:4px;margin:4px 0 0}
+.track li{flex:1;display:flex;flex-direction:column;gap:5px;font-size:11.5px;color:var(--mu);font-weight:700;min-width:0}
+.track li i{display:block;height:4px;border-radius:2px;background:var(--p2)}
+.track li.done i{background:var(--act);opacity:.55}
+.track li.cur i{background:var(--act)}
+.track li.cur{color:var(--tx)}
+.track li.done{text-decoration:none;color:var(--mu)}
+.track li span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.track.mini li span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.s-main .track{max-width:280px;margin-top:6px}
+.sbox.review h2 .cnt{min-width:24px;height:24px;padding:0 6px;border-radius:6px;background:var(--ac);color:var(--onac);font-size:13px;display:inline-flex;align-items:center;justify-content:center}
+.rcard{background:var(--p);border:1px solid var(--ac);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.rcard>div:first-child{display:flex;flex-direction:column}
+.rcard b{font-size:17px;font-weight:800;line-height:1.5}
+.rcard .mu{font-size:13px}
+.rcap{font-size:14px;line-height:1.8;white-space:pre-line;background:var(--p2);border-radius:8px;padding:10px 12px}
+.btn.rprev{width:100%}
+.racts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.racts .btn{min-height:48px;font-size:15px}
+.st.wait{color:#E0A100}
+@media (prefers-reduced-motion:reduce){.enter .fcard,.enter .rcard{animation:none}}

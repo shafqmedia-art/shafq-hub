@@ -2,4 +2,5 @@ User-agent: *
 Allow: /
 Disallow: /shafq-app/
 Disallow: /demo/app/
+Disallow: /p/
 Sitemap: https://shafqmedia.com/sitemap.xml
