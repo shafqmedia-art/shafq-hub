@@ -591,6 +591,11 @@
   var PSTEPS = ['تحضير', 'تصوير ومونتاج', 'موافقة العميل', 'مجدول', 'منشور'], POLD = { 'فكرة': 'تحضير', 'كتابة': 'تحضير', 'تصميم أو مونتاج': 'تصوير ومونتاج' };
   var PNEXT = { 'تحضير': 'جاهز للتصوير', 'تصوير ومونتاج': 'ابعت للعميل', 'موافقة العميل': 'وافق عنه', 'مجدول': 'نزل' };
   var CSTEPS = ['عم نحضّر', 'بانتظارك', 'جاهز', 'نزل'];
+  var PTAB = { 'تصوير ومونتاج': 'تصوير وتصميم' };
+  function isReel(it) { return /ريل|فيديو/.test(it.type || ''); }
+  function isReady(it) { return /جاهز/.test(it.type || '') || /^الريل الجاهز/.test(it.name || ''); }
+  function pLabel(it, s) { return s === 'تصوير ومونتاج' ? (isReady(it) ? 'بالمونتاج' : isReel(it) ? 'بالتصوير والمونتاج' : 'بالتصميم') : s; }
+  function pNext(it, s) { if (s === 'تحضير') return isReady(it) ? 'جاهز للمونتاج' : isReel(it) ? 'جاهز للتصوير' : 'تم التحضير، للتصميم'; if (s === 'تصوير ومونتاج') return it.client_id ? 'ابعت للعميل' : 'جاهز للنشر'; return PNEXT[s]; }
   function pst(s) { return POLD[s] || (PSTEPS.indexOf(s) >= 0 ? s : 'تحضير'); }
   function cstep(s) { s = pst(s); return s === 'منشور' ? 3 : s === 'مجدول' ? 2 : s === 'موافقة العميل' ? 1 : 0; }
   function track(i, labels, mini) { return '<ol class="track' + (mini ? ' mini' : '') + '" aria-label="المرحلة: ' + h(labels[i]) + '">' + labels.map(function (l, j) { return '<li class="' + (j < i ? 'done' : j === i ? 'cur' : '') + '"><i></i><span>' + h(l) + '</span></li>'; }).join('') + '</ol>'; }
@@ -598,17 +603,17 @@
   function flowView(key, m, all) {
     var cnt = {}; PSTEPS.forEach(function (s) { cnt[s] = 0; }); all.forEach(function (x) { cnt[pst(x.status)]++; });
     var cur = mstate.stage[key] || PSTEPS.filter(function (s) { return s !== 'منشور' && cnt[s]; })[0] || PSTEPS[0];
-    var c = '<nav class="ftabs" role="tablist" aria-label="المراحل">' + PSTEPS.map(function (s) { var on = s === cur; return '<button type="button" role="tab" aria-selected="' + on + '" class="' + (on ? 'on' : '') + '" data-act="fstage" data-mod="' + key + '" data-v="' + h(s) + '"><span>' + h(s) + '</span><b>' + cnt[s] + '</b></button>'; }).join('') + '</nav>';
+    var c = '<nav class="ftabs" role="tablist" aria-label="المراحل">' + PSTEPS.map(function (s) { var on = s === cur; return '<button type="button" role="tab" aria-selected="' + on + '" class="' + (on ? 'on' : '') + '" data-act="fstage" data-mod="' + key + '" data-v="' + h(s) + '"><span>' + h(PTAB[s] || s) + '</span><b>' + cnt[s] + '</b></button>'; }).join('') + '</nav>';
     var list = all.filter(function (x) { return pst(x.status) === cur; }).sort(function (a, b) { return ((a.date || '9') + (a.time || '')) < ((b.date || '9') + (b.time || '')) ? -1 : 1; });
     if (cur === 'منشور') list.reverse();
     c += list.length ? '<div class="fgrid">' + list.map(flowCard).join('') + '</div>' : '<p class="empty">' + (cur === 'موافقة العميل' ? 'ما في شي بانتظار رد العملاء.' : 'ما في شي بهالمرحلة.') + '</p>';
     return c;
   }
   function flowCard(it) {
-    var s = pst(it.status), i = PSTEPS.indexOf(s), nx = PNEXT[s], meta = [it.type, it.client_id ? clientName(it.client_id) : '', it.date ? dateAr(it.date) + (it.time ? ' ' + it.time : '') : ''].filter(Boolean).join(' · ');
+    var s = pst(it.status), i = PSTEPS.indexOf(s), nx = pNext(it, s), meta = [it.type, it.client_id ? clientName(it.client_id) : '', it.date ? dateAr(it.date) + (it.time ? ' ' + it.time : '') : ''].filter(Boolean).join(' · ');
     var note = s === 'موافقة العميل' ? '<p class="fnote wait">بانتظار رد العميل' + (it.sent_at ? ' من ' + h(dateAr(it.sent_at)) : '') + '</p>' : (it.review_note && s === 'تصوير ومونتاج' ? '<p class="fnote"><b>ملاحظة العميل:</b> ' + h(it.review_note) + '</p>' : '');
     return '<article class="fcard"><b class="ft">' + h(it.name) + '</b><span class="mu">' + h(meta) + '</span>' + track(i, PSTEPS, true) + note +
-      (nx ? btn(s === 'تصوير ومونتاج' && !it.client_id ? 'جاهز للنشر' : nx, 'pstep', { id: it.id, d: 1 }, 'pri fgo') : '') +
+      (s === 'تصوير ومونتاج' ? '<span class="fnote">' + h(pLabel(it, s)) + '</span>' : '') + (nx ? btn(nx, 'pstep', { id: it.id, d: 1 }, 'pri fgo') : '') +
       '<div class="flinks">' + (i > 0 ? btn('رجوع خطوة', 'pstep', { id: it.id, d: -1 }, 'lnk') : '') + btn('تعديل', 'editItem', { mod: 'content', id: it.id }, 'lnk') + btn('حذف', 'delItem', { id: it.id }, 'lnk') + '</div></article>';
   }
   function reviewCard(p) {
@@ -659,7 +664,7 @@
       kpis: function (l) { var mon = monthOf(today()), t = today(), ml = l.filter(function (x) { return monthOf(x.created || x.date || '') === mon; }); var inc = sum(db.moves.filter(function (m) { return live(m) && m.dir === 'in' && monthOf(m.date) === mon && m.item_id && (byId('items', m.item_id) || {}).kind === 'drone'; }), function (m) { return m.usd; }); return kpi('طلبات الشهر', String(ml.length), true, 'الهدف 100') + kpi('طلعات اليوم', String(l.filter(function (x) { return x.date === t && x.status !== 'منتهٍ'; }).length)) + kpi('بانتظار التصريح', String(l.filter(function (x) { return x.permit === 'بانتظار الموافقة' && x.status !== 'منتهٍ'; }).length)) + kpi('دخل الدرون', usd(inc), false, 'هذا الشهر'); } },
     content: { title: 'خط إنتاج المحتوى', sub: 'كل منشور من الفكرة إلى النشر', kind: 'post', add: '+ منشور جديد', flow: true,
       statuses: PSTEPS,
-      fields: function () { return [{ k: 'name', label: 'عنوان المنشور', req: true }, { k: 'client_id', label: 'العميل', type: 'select', options: clientOpts() }, { k: 'type', label: 'النوع', type: 'select', options: sel(['بوست', 'ريل', 'كاروسيل', 'ستوري', 'منشور الجمعة']) }, { k: 'owner', label: 'المسؤول', type: 'select', options: memberOpts('غير محدد') }, { k: 'date', label: 'موعد النشر', type: 'date' }, { k: 'time', label: 'ساعة النشر', type: 'time' }, { k: 'preview', label: 'رابط المعاينة للعميل (درايف أو صورة)', type: 'url', wide: true, ph: 'https://' }, { k: 'caption', label: 'الكابشن', type: 'area', wide: true }, { k: 'notes', label: 'ملاحظات داخلية (ما بيشوفها العميل)', type: 'area', wide: true }]; },
+      fields: function () { return [{ k: 'name', label: 'عنوان المنشور', req: true }, { k: 'client_id', label: 'العميل', type: 'select', options: clientOpts() }, { k: 'type', label: 'النوع', type: 'select', options: sel(['بوست', 'ريل', 'ريل جاهز', 'كاروسيل', 'ستوري', 'منشور الجمعة']) }, { k: 'owner', label: 'المسؤول', type: 'select', options: memberOpts('غير محدد') }, { k: 'date', label: 'موعد النشر', type: 'date' }, { k: 'time', label: 'ساعة النشر', type: 'time' }, { k: 'preview', label: 'رابط المعاينة للعميل (درايف أو صورة)', type: 'url', wide: true, ph: 'https://' }, { k: 'caption', label: 'الكابشن', type: 'area', wide: true }, { k: 'notes', label: 'ملاحظات داخلية (ما بيشوفها العميل)', type: 'area', wide: true }]; },
       summary: function (it) { return h(it.type || '') + ' · ' + h(it.client_id ? clientName(it.client_id) : 'عام') + (it.date ? ' · ' + h(dateAr(it.date)) : ''); },
       kpis: function (l) { return kpi('قيد العمل', String(l.filter(function (x) { return x.status !== 'منشور'; }).length)) + kpi('بانتظار موافقة العميل', String(l.filter(function (x) { return x.status === 'موافقة العميل'; }).length), true) + kpi('مجدول', String(l.filter(function (x) { return x.status === 'مجدول'; }).length)) + kpi('نُشر هذا الشهر', String(l.filter(function (x) { return x.status === 'منشور' && monthOf(x.date || '') === monthOf(today()); }).length)); } },
     talent: { title: 'فريلانس', sub: 'قاعدة بيانات الفريلانسرز للمشاريع القادمة', kind: 'talent', add: '+ فريلانسر', tagField: 'skills', tagLabel: 'الاختصاص',
@@ -759,7 +764,7 @@
       if (fw && to === 'موافقة العميل' && !safeLink(it.preview) && !confirm('ما في رابط معاينة. العميل رح يشوف العنوان والكابشن بس. نبعت؟')) return;
       if (fw && s === 'موافقة العميل' && !confirm('توافق عن العميل وتنقل المنشور لمجدول؟')) return;
       it.status = to; if (to === 'موافقة العميل') { it.review_note = ''; it.sent_at = today(); }
-      save(); render(); toast(to === 'موافقة العميل' ? 'انبعت للعميل' : 'صار: ' + to);
+      save(); render(); toast(to === 'موافقة العميل' ? 'انبعت للعميل' : 'صار: ' + pLabel(it, to));
       if (fw && it.client_id && to === 'موافقة العميل') notify([{ to: { client: it.client_id }, title: 'محتوى بانتظار موافقتك', body: '«' + (it.name || '') + '»' + (it.type ? ' · ' + it.type : ''), tag: 'review', url: './#/' }]);
       if (fw && it.client_id && to === 'منشور') notify([{ to: { client: it.client_id }, title: 'نزل منشور جديد', body: '«' + (it.name || '') + '»' + (it.type ? ' · ' + it.type : ''), tag: 'post' }]);
     },
@@ -1085,7 +1090,7 @@
 
   /* ---------- خطة المحتوى من ملف إكسل ---------- */
   var XL_COLS = ['التاريخ', 'الساعة', 'العميل', 'النوع', 'العنوان', 'المسؤول', 'الحالة', 'ملاحظات'];
-  var XL_TYPES = ['بوست', 'ريل', 'كاروسيل', 'ستوري', 'منشور الجمعة'];
+  var XL_TYPES = ['بوست', 'ريل', 'ريل جاهز', 'كاروسيل', 'ستوري', 'منشور الجمعة'];
   var CRC = (function () { var t = []; for (var n = 0; n < 256; n++) { var c = n; for (var k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
   function crc32(b) { var c = 0xFFFFFFFF; for (var i = 0; i < b.length; i++) c = CRC[(c ^ b[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
   function zipStore(files) { // ملف zip بدون ضغط، يكفي لقالب صغير

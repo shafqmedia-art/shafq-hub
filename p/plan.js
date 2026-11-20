@@ -21,7 +21,7 @@ function state(title,msg,loading){
 function render(d){
   var c=d.client||{},h='';
   document.title=(c.name||'خطة')+' · شفق ميديا';
-  var secs=[['goals','الأهداف والجمهور'],['reels','خطة الريلز'],['posts','المنشورات والكاروسيلات'],['publish','النشر والتصوير']];
+  var secs=[['goals','الأهداف والجمهور'],['reels','خطة الريلز'],['posts','المنشورات والكاروسيلات'],['publish','النشر والتصوير']];if(d.calendar)secs.push(['calendar','التقويم']);
   h+='<header class="pbar"><div class="wrap"><a class="lg" href="/" aria-label="شفق ميديا"><img src="'+LOGO+'" alt="شفق ميديا" width="17" height="34"></a><nav class="toc">'+
     secs.map(function(s){return '<a href="#'+s[0]+'">'+esc(s[1])+'</a>'}).join('')+'</nav></div></header>';
 
@@ -35,17 +35,17 @@ function render(d){
   var g=d.goals||{items:[]};
   h+=sh('goals',1,'الأهداف والجمهور','لمين عم نحكي، وشو بدنا نوصل');
   h+='<div class="sub rv"><small>أولاً</small>الأهداف التسويقية</div><div class="grid g4">'+
-    g.items.map(function(it,i){return '<div class="cd rv'+(i===g.focus?' d':'')+'"><span class="no">'+pad(i+1)+'</span><h3>'+esc(it[0])+'</h3><p class="m">'+esc(it[1])+'</p></div>'}).join('')+
+    g.items.map(function(it,i){return '<div class="cd rv"><span class="no">'+pad(i+1)+'</span><h3>'+esc(it[0])+'</h3><p class="m">'+esc(it[1])+'</p></div>'}).join('')+
     (g.result?'<div class="cd l res rv">'+esc(g.result)+'</div>':'')+'</div>';
   if(d.audience){
     h+='<div class="sub rv">الجمهور المستهدف</div><div class="face"><div class="grid g2">'+
       d.audience.map(function(a,i){return '<div class="cd rv"'+(i===d.audience.length-1&&d.audience.length%2?' style="grid-column:1/-1"':'')+'><span class="no">'+pad(i+1)+'</span><h3>'+esc(a)+'</h3></div>'}).join('')+'</div>';
-    if(d.face){var f=d.face;h+='<div class="fc rv"><span class="tg">'+esc(f.label)+'</span><b>'+esc(f.name)+'</b><div class="r">'+esc(f.role)+'</div><ul class="dots">'+f.points.map(function(p){return '<li>'+esc(p)+'</li>'}).join('')+'</ul></div>';}
+    if(d.face){var f=d.face;h+='<div class="cd fc rv"><span class="tg">'+esc(f.label)+'</span><b>'+esc(f.name)+'</b><div class="r">'+esc(f.role)+'</div><ul class="dots">'+f.points.map(function(p){return '<li>'+esc(p)+'</li>'}).join('')+'</ul></div>';}
     h+='</div>';
   }
   if(d.numbers){
     h+='<div class="sub rv"><small>محتوى شهر كامل</small>الخطة بأربعة أرقام</div><div class="grid g4">'+
-      d.numbers.map(function(n,i){return '<div class="cd num rv'+(i===0?' l':'')+'"><div class="k">'+esc(n[1])+'</div><div class="v" data-n="'+(+n[0])+'">0</div><div class="m">'+esc(n[2])+'</div></div>'}).join('')+'</div>';
+      d.numbers.map(function(n,i){return '<div class="cd num rv"><div class="k">'+esc(n[1])+'</div><div class="v" data-n="'+(+n[0])+'">0</div><div class="m">'+esc(n[2])+'</div></div>'}).join('')+'</div>';
   }
   h+='</div></section>';
 
@@ -70,9 +70,9 @@ function render(d){
   var P=d.posts||{items:[]},C=d.carousels||{items:[]};
   h+=sh('posts',3,'المنشورات والكاروسيلات',P.items.length+' منشورات ثابتة و'+C.items.length+' كاروسيلات');
   h+='<div class="sub rv"><small>'+esc(P.note)+'</small>المنشورات الثابتة</div><div class="grid g4">'+
-    P.items.map(function(p,i){var k=i===0?' d':(i===P.items.length-1?' l':'');return '<div class="cd post rv'+k+'"><span class="no">'+pad(i+1)+'</span><h3>'+esc(p[0])+'</h3><p class="m">'+esc(p[1])+'</p></div>'}).join('')+'</div>';
+    P.items.map(function(p,i){return '<div class="cd post rv"><span class="no">'+pad(i+1)+'</span><h3>'+esc(p[0])+'</h3><p class="m">'+esc(p[1])+'</p></div>'}).join('')+'</div>';
   h+='<div class="sub rv"><small>'+esc(C.note)+'</small>الكاروسيلات</div><div class="grid g4">'+
-    C.items.map(function(x,i){return '<div class="cd car rv'+(i===C.items.length-1?' l':'')+'"><span class="no">'+pad(i+1)+'</span><h3>'+esc(x.title)+(x.sub?'<br><span class="sub2">'+esc(x.sub)+'</span>':'')+'</h3><ol>'+
+    C.items.map(function(x,i){return '<div class="cd car rv"><span class="no">'+pad(i+1)+'</span><h3>'+esc(x.title)+(x.sub?'<br><span class="sub2">'+esc(x.sub)+'</span>':'')+'</h3><ol>'+
       x.slides.map(function(s){return '<li>'+esc(s)+'</li>'}).join('')+'</ol></div>'}).join('')+'</div>';
   h+='</div></section>';
 
@@ -86,11 +86,47 @@ function render(d){
     '<div class="cd sess st rv"><h5>أسلوب التصوير</h5><ul class="dots" style="border:0;padding-top:0">'+SH.style.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div></div>';}
   h+='</div></section>';
 
+  if(d.calendar)h+=calendar(d.calendar);
   h+='<section class="thx">'+(c.logo?'<img class="rv" src="'+esc(c.logo)+'" alt="" width="120" height="120">':'')+'<h2 class="rv">شكراً لثقتكم</h2><p class="rv">كل يوم <mark>شفق</mark> جديد لعلامتك</p><a class="chip l rv" href="/">shafqmedia.com</a></section>';
   h+='<footer class="pfoot"><div class="wrap"><span>'+esc(c.name)+' × شفق ميديا</span><span>هذه الصفحة خاصة، لا تشاركها إلا مع فريقك.</span></div></footer>';
 
   root.innerHTML=h;
   wire(d,byN);
+}
+var DAYS=['السبت','الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة'];
+var MONTHS=['كانون الثاني','شباط','آذار','نيسان','أيار','حزيران','تموز','آب','أيلول','تشرين الأول','تشرين الثاني','كانون الأول'];
+function evKind(t){return /ريل/.test(t)?'reel':/كاروسيل/.test(t)?'car':'post'}
+function ev(x){var t=String(x.title||''),p=/^الكوبون الفرنسي /.test(t);return '<div class="ev '+evKind(x.type)+'" title="'+esc(t)+'"><b class="fl">'+esc(p?t.replace(/^الكوبون الفرنسي /,''):t)+'</b><small>'+esc(x.type)+(p?' · الكوبون':'')+(x.t?' · '+esc(x.t):'')+'</small></div>'}
+function calendar(C){
+  var y=+C.month.slice(0,4),m=+C.month.slice(5,7),first=new Date(Date.UTC(y,m-1,1)),days=new Date(Date.UTC(y,m,0)).getUTCDate();
+  var lead=(first.getUTCDay()+1)%7,by={},extra=[];
+  (C.items||[]).forEach(function(x){if(x.d.slice(0,7)===C.month){(by[x.d]=by[x.d]||[]).push(x)}else extra.push(x)});
+  var h=sh('calendar',5,C.title||'تقويم النشر',(C.note?C.note+' · ':'')+MONTHS[m-1]+' '+y);
+  h+='<div class="cal rv"><div class="cal-h">'+DAYS.map(function(x){return '<span>'+x+'</span>'}).join('')+'</div><div class="cal-g">';
+  var cells=Math.ceil((lead+days)/7)*7,ag='';
+  for(var i=0;i<cells;i++){
+    var dn=i-lead+1;
+    if(dn<1||dn>days){h+='<div class="day out"></div>';continue}
+    var key=C.month+'-'+pad(dn),list=by[key]||[];
+    h+='<div class="day'+(list.length?' has':'')+'"><span class="dn">'+dn+'</span>'+list.map(ev).join('')+'</div>';
+    if(list.length)ag+='<div class="cd ag-d"><div class="ag-h"><span class="no">'+dn+'</span><b>'+DAYS[(lead+dn-1)%7]+' '+dn+' '+MONTHS[m-1]+'</b></div>'+list.map(ev).join('')+'</div>';
+  }
+  h+='</div></div><div class="agenda">'+ag+'</div>';
+  h+='<div class="leg"><span><i class="reel"></i>ريل</span><span><i></i>بوست</span><span><i class="car"></i>كاروسيل</span></div>';
+  if(extra.length)h+='<p class="extra">وبأول الشهر الجاي: '+extra.map(function(x){var dt=new Date(x.d+'T12:00:00');return esc(x.title)+' ('+esc(x.type)+'، '+dt.getDate()+' '+MONTHS[dt.getMonth()]+')'}).join('، ')+'</p>';
+  return h+'</div></section>';
+}
+// every text on one line: shrink the font until it fits, wrap only if it cannot
+var FIT='.cd h3,.cd .m,.steps li,.car li,.dots li,.cd.res,.sh p,.ev b,.ev small,.sub';
+function fitAll(){
+  Array.prototype.forEach.call(root.querySelectorAll(FIT),function(el){
+    if(el.closest('.script'))return;
+    el.classList.remove('fit');el.style.fontSize='';el.style.whiteSpace='';
+    var base=parseFloat(getComputedStyle(el).fontSize),min=Math.max(10.5,base*.66),fs=base;
+    el.classList.add('fit');
+    while(el.scrollWidth>el.clientWidth+1&&fs>min){fs-=.5;el.style.fontSize=fs+'px'}
+    if(el.scrollWidth>el.clientWidth+1){el.classList.remove('fit');el.style.fontSize=''}
+  });
 }
 function sh(id,n,t,p){return '<section class="sec" id="'+id+'"><div class="wrap"><div class="sh rv"><span class="sn">'+pad(n)+'</span><div><h2>'+esc(t)+'</h2>'+(p?'<p>'+esc(p)+'</p>':'')+'</div></div>'}
 function table(head,rows,alt){
@@ -107,13 +143,14 @@ function wire(d,byN){
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   // reveal + counters
   var io='IntersectionObserver' in window?new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;
-    e.target.classList.add('in');io.unobserve(e.target);
+    e.target.classList.add('in');io.unobserve(e.target);var t0=e.target;setTimeout(function(){t0.style.transitionDelay=''},1100);
     var v=e.target.querySelector('.v[data-n]');if(v)count(v,reduce);
   })},{threshold:.12,rootMargin:'0px 0px -6% 0px'}):null;
   var rv=root.querySelectorAll('.rv');
   // stagger siblings in grids
   Array.prototype.forEach.call(root.querySelectorAll('.grid'),function(g){Array.prototype.forEach.call(g.children,function(ch,i){ch.style.transitionDelay=(Math.min(i,6)*70)+'ms'})});
   Array.prototype.forEach.call(rv,function(el){io?io.observe(el):(el.classList.add('in'))});
+  fitAll();var rt;addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(fitAll,150)});if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitAll);
   if(!io)Array.prototype.forEach.call(root.querySelectorAll('.v[data-n]'),function(v){v.textContent=v.dataset.n});
 
   // script panels
