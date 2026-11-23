@@ -212,6 +212,15 @@ function wire(byN,tabs){
 // boot
 var Q=new URLSearchParams(location.search);
 if(Q.get('embed'))document.documentElement.classList.add('embed');
+if(Q.has('team')){
+  var teamData = null;
+  try {
+    if (parent !== window && parent.SHAFQ) teamData = parent.SHAFQ.teamPlanForFrame(Q.get('team'));
+  } catch (e) {}
+  if (teamData) render(teamData);
+  else state('الخطة غير متاحة','افتح الخطة من قائمة خطط المحتوى في حساب الفريق.');
+  return;
+}
 if(window.__PLAN__){render(window.__PLAN__);return}
 if(Q.get('demo')){try{var dd=JSON.parse(localStorage.getItem('shafq.demo.plan')||'null');if(dd){render(dd);return}}catch(e){}}
 var t=token();

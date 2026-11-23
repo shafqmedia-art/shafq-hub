@@ -43,7 +43,7 @@
     if (!ONLINE) { localStorage.setItem(KEY, JSON.stringify(db)); return; }
     SRV.push(db).catch(function (e) { toast('تعذر الحفظ: ' + e.message); return resync(); });
   }
-  function resync() { return SRV.pull().then(function (d) { db = d; if (me() && me().role === 'client') pstate.data = null; render(); }).catch(function () { if (!SRV.hasSession()) render(); }); }
+  function resync() { return SRV.pull().then(function (d) { db = d; if (me() && me().role === 'member' && route().indexOf('#/team-plan/') !== 0) resetTeamPlans(); if (me() && me().role === 'client') pstate.data = null; render(); }).catch(function () { if (!SRV.hasSession()) render(); }); }
   function checkSetup() {
     state.ready = false; render();
     return SRV.hasManager().then(function (b) { state.needSetup = !b; state.err = ''; }, function (e) { state.err = e.message; }).then(function () { state.ready = true; render(); });
@@ -227,10 +227,74 @@
   }
   function myTasks() { var u = me(); return db.tasks.filter(function (x) { return x.user_id === u.id; }); }
   function mcKey(t) { return t.client_id || ('n:' + (t.client_name || 'عام')); }
+  var teamPlan = { user: '', list: undefined, detail: undefined, key: '', requests: {} };
+  function resetTeamPlans() {
+    teamPlan = { user: '', list: undefined, detail: undefined, key: '', requests: {} };
+  }
+  function teamPlanData(key) {
+    var user = me();
+    if (teamPlan.user !== user.id) { resetTeamPlans(); teamPlan.user = user.id; }
+    var field = key ? 'detail' : 'list';
+    if (key && teamPlan.key !== key) {
+      teamPlan.key = key; teamPlan.detail = undefined; delete teamPlan.requests.detail;
+    }
+    if (!ONLINE) {
+      return db.clients.filter(function (c) { return !key || c.id === key; }).map(function (c) {
+        var roles = normRoles(c).filter(function (r) { return r.user === user.id; }).map(function (r) { return r.role; });
+        var saved = db.settings['plan_' + c.id];
+        if (!roles.length || !saved || saved.active === false || !saved.data) return null;
+        return { id: c.id, name: c.name, roles: roles, title: saved.data.title, date: saved.data.date, plan: key ? saved.data : null };
+      }).filter(Boolean);
+    }
+    if (teamPlan[field] === undefined && !teamPlan.requests[field]) {
+      var request = {}, current = teamPlan;
+      current.requests[field] = request;
+      SRV.rpc('team_content_plans', { p_client: key || null }).then(function (rows) {
+        return Array.isArray(rows) ? rows : [];
+      }, function () { return { error: true }; }).then(function (result) {
+        if (teamPlan !== current || current.requests[field] !== request || !me() || me().id !== user.id) return;
+        delete current.requests[field]; current[field] = result;
+        if (route() === '#/' || route() === '#/team-plans' || route().indexOf('#/team-plan/') === 0) render();
+      });
+    }
+    return teamPlan[field];
+  }
+  function teamPlanStatus(rows) {
+    if (rows === undefined) return '<p class="empty" role="status">جارٍ تحميل الخطط…</p>';
+    if (rows.error) return '<p class="warn">تعذر تحميل الخطط.</p>' + btn('إعادة المحاولة', 'teamPlanRefresh', {}, 'sm');
+    return '<p class="empty">ما في خطة مفعّلة متاحة إلك هون. راجع مدير المشروع إذا كانت الخطة جاهزة.</p>';
+  }
+  function teamPlanRows(rows) {
+    return rows && rows.length ? simpleList(rows.map(function (x) {
+      var meta = (x.roles || []).filter(Boolean).join('، ');
+      return '<a class="sline link" href="#/team-plan/' + encodeURIComponent(x.id) + '"><span class="s-main"><b>' + h(x.name) + '</b><small>' + h([meta, x.date].filter(Boolean).join(' · ')) + '</small></span>' + CHEV + '</a>';
+    })) : teamPlanStatus(rows);
+  }
+  function vTeamPlans() {
+    return shell(head('خطط المحتوى', 'خطط العملاء اللي إلك دور معهم', '<a class="btn" href="#/">رجوع لليوم</a>') + teamPlanRows(teamPlanData()));
+  }
+  function vTeamPlan(key) {
+    var rows = teamPlanData(key), item = rows && rows[0], back = '<a class="btn" href="#/team-plans">كل الخطط</a>';
+    if (!item) return shell(head('خطة المحتوى', '', back) + teamPlanStatus(rows));
+    var tasks = myTasks().filter(function (t) { return t.client_id === key && !t.done; });
+    var roles = (item.roles || []).filter(Boolean).join('، ');
+    var header = head(item.name, item.title || 'خطة المحتوى', back + btn('تحديث الخطة', 'teamPlanRefresh', {}, 'sm'));
+    return shell(header + '<section class="sbox"><h2>دوري بالخطة</h2>' + (roles ? '<p class="mu">' + h(roles) + '</p>' : '') +
+      simpleList(tasks.map(function (t) { return taskLine(t, false); }), 'ما في مهام مفتوحة.') +
+      '</section><iframe class="team-plan-frame" title="خطة المحتوى" src="../p/?embed=1&amp;team=' + encodeURIComponent(key) + '"></iframe>');
+  }
+  function teamPlanForFrame(key) {
+    var user = me();
+    if (!user || user.role !== 'member' || route() !== '#/team-plan/' + key) return null;
+    var rows = teamPlanData(key);
+    return rows && rows[0] && rows[0].plan || null;
+  }
   function vMemberHome() {
     var u = me(), t = today(), open = myTasks().filter(function (x) { return !x.done; }).sort(function (a, b) { return a.due < b.due ? -1 : 1; });
     var now = open.filter(function (x) { return x.due <= t; }), next = open.filter(function (x) { return x.due > t; })[0];
     var c = '<div class="hello"><h1>' + greet() + '، ' + h(u.name) + '</h1><p class="mu">' + h(longDates()) + '</p></div>';
+    var plans = teamPlanData();
+    c += '<section class="sbox"><h2>خطط المحتوى</h2>' + teamPlanRows(plans && plans.length ? plans.slice(0, 3) : plans) + (plans && plans.length > 3 ? '<a class="btn sm" href="#/team-plans">كل الخطط</a>' : '') + '</section>';
     c += '<section class="sbox"><h2>مهام اليوم <span class="mu">' + now.length + '</span></h2>' + simpleList(now.map(function (x) { return taskLine(x, false); }), 'ما عندك مهام لليوم.') + '</section>';
     c += '<section class="sbox"><h2>أقرب موعد</h2>' + (next ? '<div class="slist"><div class="sline"><span class="s-main"><b>' + h(next.title) + '</b><small>' + h(next.client_name || 'عام') + ' · ' + h(dateAr(next.due)) + '</small></span></div></div>' : '<p class="empty">ما في مواعيد قادمة.</p>') + '</section>';
     return shell(c);
@@ -249,7 +313,7 @@
   }
   function vMemberClients() {
     var list = memberClients();
-    var c = head('العملاء', list.length + ' عملاء تشتغل معهم');
+    var c = head('العملاء', list.length + ' عملاء مرتبطين بمهامك', '<a class="btn" href="#/team-plans">خطط المحتوى</a>');
     c += simpleList(list.map(function (x) { return '<a class="sline link" href="#/mc/' + encodeURIComponent(x.key) + '"><span class="s-main"><b>' + h(x.name) + '</b><small>' + (x.open ? x.open + ' مهام مفتوحة' + (x.next ? ' · أقرب موعد ' + h(dateAr(x.next)) : '') : 'ما في مهام مفتوحة') + '</small></span>' + CHEV + '</a>'; }), 'لسا ما في عملاء مرتبطين بمهامك.');
     return shell(c);
   }
@@ -525,12 +589,13 @@
         return rcv ? 'سُجّلت الدفعة · وصل ' + rcv : v.user_id && v.dir === 'out' ? 'سُجّلت · تم القبض لـ ' + userName(v.user_id) : 'سُجّلت الحركة';
   }
   var acts = {
+    teamPlanRefresh: function () { resetTeamPlans(); render(); },
     close: closeForm,
     openReceipt: function (d) { var it = byId('items', d.id); if (!it || !it.receipt || !isMgr()) return; var w = window.open('', '_blank'); SRV.receiptUrl(it.receipt).then(function (u) { if (w) w.location = u; else location.href = u; }, function () { if (w) w.close(); toast('تعذر فتح الوصل'); }); },
     theme: function () { var l = document.body.classList.toggle('t-light'); document.body.classList.toggle('t-dark', !l); localStorage.setItem(TKEY, l ? 'light' : 'dark'); themeMeta(); render(); },
     moreNav: function () { document.body.classList.toggle('navopen'); },
     msgAdmin: function (d) { if (isMgr()) return; msgAdminForm(d.kind); },
-    logout: function () { try { localStorage.removeItem(NKEY); if (window.indexedDB) indexedDB.deleteDatabase('shafq-notes'); } catch (e) {} pstate.data = null; pstate.month = ''; if (ONLINE) { SRV.idle().then(pushOff).then(function () { return SRV.signOut(); }).then(function () { db = blank(); location.hash = '#/'; checkSetup(); }); return; } localStorage.removeItem(SKEY); location.hash = '#/'; render(); },
+    logout: function () { resetTeamPlans(); try { localStorage.removeItem(NKEY); if (window.indexedDB) indexedDB.deleteDatabase('shafq-notes'); } catch (e) {} pstate.data = null; pstate.month = ''; if (ONLINE) { SRV.idle().then(pushOff).then(function () { return SRV.signOut(); }).then(function () { db = blank(); location.hash = '#/'; checkSetup(); }); return; } localStorage.removeItem(SKEY); location.hash = '#/'; render(); },
     retry: function () { boot(); },
     addClient: function () { clientForm(null); },
     editClient: function (d) { clientForm(byId('clients', d.id)); },
@@ -1491,7 +1556,7 @@
     if (a === 'forgotOpen') { fstate = { open: true, sent: false, phone: (document.getElementById('l_phone') || {}).value || '', wa: '' }; render(); return; }
     if (a === 'forgotClose') { fstate.open = false; fstate.sent = false; render(); return; }
     if (!acts[a]) return;
-    if (!isMgr() && ['close', 'theme', 'logout', 'retry', 'delPhoto', 'chPass', 'portalRefresh', 'portalMonth', 'pushOn', 'pushLater', 'pushTest', 'moreNav', 'msgAdmin', 'review', 'reviewEdit'].indexOf(a) < 0) return;
+    if (!isMgr() && ['teamPlanRefresh', 'close', 'theme', 'logout', 'retry', 'delPhoto', 'chPass', 'portalRefresh', 'portalMonth', 'pushOn', 'pushLater', 'pushTest', 'moreNav', 'msgAdmin', 'review', 'reviewEdit'].indexOf(a) < 0) return;
     acts[a](el.dataset);
   });
   document.addEventListener('change', function (e) {
@@ -1566,7 +1631,7 @@
     else if (!ONLINE && !me()) html = vLogin();
     else if (r === '#/notes') html = vNotes();
     else if (me().role === 'client') html = vPortal();
-    else if (!isMgr()) { if (r === '#/profile') html = vProfile(); else if (r === '#/tasks') html = vMemberTasks(); else if (r === '#/clients') html = vMemberClients(); else if (r === '#/money') html = vMemberMoney(); else if (r.indexOf('#/mc/') === 0) html = vMemberClient(decodeURIComponent(r.slice(5))); else if (r === '#/' || r === '') html = vMemberHome(); else { location.hash = '#/'; return; } }
+    else if (!isMgr()) { if (r === '#/team-plans') html = vTeamPlans(); else if (/^#\/team-plan\/[a-z0-9-]+$/i.test(r)) html = vTeamPlan(r.slice(12)); else if (r === '#/profile') html = vProfile(); else if (r === '#/tasks') html = vMemberTasks(); else if (r === '#/clients') html = vMemberClients(); else if (r === '#/money') html = vMemberMoney(); else if (r.indexOf('#/mc/') === 0) html = vMemberClient(decodeURIComponent(r.slice(5))); else if (r === '#/' || r === '') html = vMemberHome(); else { location.hash = '#/'; return; } }
     else if (r === '#/clients') html = vClients();
     else if (/^#\/client\/[^/]+\/plan$/.test(r)) html = vClientPlan(r.slice(9, -5));
     else if (r.indexOf('#/client/') === 0) html = vClient(r.slice(9));
@@ -1599,11 +1664,11 @@
       window.addEventListener('focus', soft); setInterval(soft, 120000);
     }
     if (window.matchMedia) { var mq = window.matchMedia('(max-width:900px)'); var onMq = function () { if (route() === '#/' && isMgr && me() && isMgr()) render(); }; if (mq.addEventListener) mq.addEventListener('change', onMq); }
-    window.addEventListener('hashchange', function () { document.body.classList.remove('navopen'); if (route() === '#/notes') nstate.list = null; enter(); render(); window.scrollTo(0, 0); });
+    window.addEventListener('hashchange', function () { document.body.classList.remove('navopen'); if (route() === '#/notes') nstate.list = null; if (route().indexOf('#/team-plan/') === 0) resetTeamPlans(); enter(); render(); window.scrollTo(0, 0); });
     if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', function (e) { if (e.data && e.data.type === 'note') { if (route() === '#/notes') nstate.list = null; updateBadge(); if (route() === '#/notes') render(); } });
     enter();
     if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) navigator.serviceWorker.register('sw.js').catch(function () {});
   }
-  window.SHAFQ = { render: render, db: function () { return db; }, save: function () { save(); render(); } };
+  window.SHAFQ = { teamPlanForFrame: teamPlanForFrame, render: render, db: function () { return db; }, save: function () { save(); render(); } };
   start();
 })();
