@@ -1,0 +1,277 @@
+@font-face {
+  font-family: Cairo;
+  src: url(../shafq-app/fonts/Cairo-Regular.ttf) format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Cairo;
+  src: url(../shafq-app/fonts/Cairo-SemiBold.ttf) format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Cairo;
+  src: url(../shafq-app/fonts/Cairo-Bold.ttf) format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Cairo;
+  src: url(../shafq-app/fonts/Cairo-Black.ttf) format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  background: #000;
+  color: #fff;
+  font: 400 1rem/1.6 Cairo, sans-serif;
+  font-synthesis: none;
+}
+
+.entry {
+  /* Anchor both steps to the first card's center without fixing the card height. */
+  --initial-card-height: 418px;
+  min-height: 100vh;
+  min-height: 100svh;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: clamp(28px, 5vw, 80px);
+  padding-block: max(32px, calc((100svh - var(--initial-card-height)) / 2)) 32px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 420px);
+  gap: clamp(36px, 6.5vw, 106px);
+  align-items: start;
+  direction: ltr;
+}
+
+.brand {
+  min-height: var(--initial-card-height);
+  display: grid;
+  align-content: center;
+  direction: rtl;
+  text-align: center;
+}
+
+.brand-lockup {
+  width: 80%;
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: 17% minmax(0, 1fr);
+  align-items: center;
+  gap: 5%;
+  container-type: inline-size;
+  white-space: nowrap;
+}
+
+.brand-lockup img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.brand-lockup span {
+  font-size: 14cqi;
+  font-weight: 900;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.brand p {
+  margin: 0;
+  color: #ededed;
+  font-size: clamp(20px, 2vw, 28px);
+  white-space: nowrap;
+}
+
+.access {
+  direction: rtl;
+  width: 100%;
+  padding: 32px;
+  border-radius: 18px;
+  background: #fff;
+  color: #000;
+}
+
+h1 {
+  margin: 0 0 4px;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 42px;
+}
+
+.intro, #delivery {
+  margin: 0 0 28px;
+  color: #515151;
+  font-size: 15px;
+  line-height: 24px;
+  overflow-wrap: anywhere;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  text-align: right;
+  line-height: 24px;
+}
+
+input, button { font: inherit; }
+input {
+  display: block;
+  width: 100%;
+  height: 52px;
+  padding-inline: 12px;
+  border: 1px solid #a0a0a0;
+  border-radius: 10px;
+  background: #fff;
+  color: #000;
+  text-align: left;
+}
+
+input:focus {
+  border-color: #171717;
+  outline: 1px solid #171717;
+}
+
+button {
+  cursor: pointer;
+  width: 100%;
+  min-height: 52px;
+  margin-top: 16px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: #C8F03C;
+  color: #000;
+  font-weight: 600;
+}
+
+button:hover { box-shadow: inset 0 0 0 1px #000; }
+button:focus-visible { outline: 2px solid #333; outline-offset: 3px; }
+button:disabled { cursor: wait; opacity: .6; }
+
+.field-message {
+  margin: 8px 0 0;
+  color: #515151;
+  font-size: 14px;
+}
+
+.account-switch { margin-top: 12px; text-align: center; }
+
+.code-actions {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0 12px;
+  margin-top: 4px;
+}
+
+.secondary {
+  width: auto;
+  min-height: 32px;
+  margin-top: 0;
+  padding: 4px 0;
+  color: #333;
+  background: transparent;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-size: 14px;
+}
+.secondary:hover { box-shadow: none; color: #000; }
+
+@media (max-width: 800px) {
+  .entry {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    align-content: start;
+    gap: 32px;
+    padding: clamp(36px, 11svh, 92px) 20px 28px;
+  }
+  .brand { min-height: 0; }
+  .brand-lockup { width: min(240px, calc(100vw - 40px)); }
+  .brand p { font-size: 17px; }
+  .access { max-width: 420px; padding: 24px; }
+  h1 { font-size: 27px; line-height: 38px; }
+}
+
+.brand-line { overflow: hidden; margin-top: 22px; }
+
+.card-social {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.card-social a {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: #000;
+  opacity: .72;
+  transition: transform 150ms ease, opacity 150ms ease;
+}
+
+.card-social a:hover { transform: translateY(-2px); opacity: 1; }
+.card-social a:focus-visible { outline: 2px solid #000; outline-offset: -3px; opacity: 1; }
+.card-social svg { display: block; width: 22px; height: 22px; }
+
+#delivery { margin-bottom: 8px; }
+.access:has(#code-form:not([hidden])) { padding-bottom: 16px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .entry {
+    --entrance-ease: cubic-bezier(.22, 1, .36, 1);
+    overflow-x: clip;
+  }
+
+  .brand-lockup { animation: rise-in 450ms var(--entrance-ease) both; --rise: 8px; }
+  .brand-line p { animation: rise-in 400ms var(--entrance-ease) 220ms both; --rise: 12px; }
+  .access {
+    --slide-x: 12px;
+    --slide-y: 0px;
+    animation: card-in 420ms var(--entrance-ease) 100ms both;
+  }
+  .access:focus-within { animation: none; }
+
+  .social-item {
+    --rise: 4px;
+    animation: rise-in 210ms var(--entrance-ease) 430ms both;
+  }
+  .social-item + .social-item { animation-delay: 490ms; }
+  .social-item:focus-within { animation: none; }
+
+  @keyframes rise-in {
+    from { opacity: 0; transform: translateY(var(--rise)); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes card-in {
+    from { opacity: 0; transform: translate(var(--slide-x), var(--slide-y)); }
+    to { opacity: 1; transform: translate(0, 0); }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-social a { transition: none; }
+  .card-social a:hover { transform: none; }
+}
+
+@media (max-width: 800px) {
+  .brand-line { margin-top: 20px; }
+  .access:has(#code-form:not([hidden])) { padding-bottom: 8px; }
+  .access { --slide-x: 0px; --slide-y: 8px; }
+}

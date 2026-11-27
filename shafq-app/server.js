@@ -113,6 +113,27 @@
     digits: digits,
     hasManager: function () { return raw('POST', '/rest/v1/rpc/has_manager', {}, { anon: true }); },
     signIn: function (phone, pass) { return raw('POST', '/auth/v1/token?grant_type=password', { email: email(phone), password: pass }, { anon: true }).then(setSess); },
+    requestEmailCode: function (address, createAccount) {
+      return raw('POST', '/auth/v1/otp', { email: address, create_user: createAccount === true }, { anon: true });
+    },
+    verifiedEmailSession: function () {
+      if (!sess || !sess.user_id) return Promise.resolve(false);
+      return call('GET', '/auth/v1/user').then(function (user) {
+        return !!(sess && user && user.id === sess.user_id && user.email_confirmed_at);
+      });
+    },
+    verifyEmailCode: function (address, token) {
+      return raw('POST', '/auth/v1/verify', { email: address, token: token, type: 'email' }, { anon: true }).then(function (r) {
+        if (!r || !r.access_token || !r.user || !r.user.id) throw new Error('Invalid session');
+        setSess(r);
+      });
+    },
+    activeProfile: function () {
+      if (!sess || !sess.user_id) return Promise.resolve(false);
+      return call('GET', '/rest/v1/profiles?select=id,active&id=eq.' + encodeURIComponent(sess.user_id)).then(function (rows) {
+        return Array.isArray(rows) && rows.some(function (row) { return row.id === sess.user_id && row.active === true; });
+      });
+    },
     // keep=false: إنشاء حساب لعضو الفريق دون تبديل جلسة المدير
     signUp: function (phone, pass, keep) {
       return raw('POST', '/auth/v1/signup', { email: email(phone), password: pass }, { anon: true }).then(function (r) {
@@ -135,6 +156,9 @@
         if (e.status === 400 && /unknown action/.test(e.message)) return self.signUp(phone, pass, false); // نسخة قديمة من الدالة
         throw e;
       });
+    },
+    setLoginEmail: function (profileId, address) {
+      return call('POST', '/functions/v1/link-login-email', { profileId: profileId, email: address });
     },
     auditLog: function () { return call('GET', '/rest/v1/audit_log?select=at,actor_name,tbl,op,summary&order=id.desc&limit=60'); },
     rpc: function (name, body) { return call('POST', '/rest/v1/rpc/' + name, body || {}); },

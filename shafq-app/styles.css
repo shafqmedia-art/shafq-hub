@@ -2,8 +2,8 @@
 @font-face{font-family:Cairo;src:url(fonts/Cairo-SemiBold.ttf) format('truetype');font-weight:500 600;font-display:swap}
 @font-face{font-family:Cairo;src:url(fonts/Cairo-Bold.ttf) format('truetype');font-weight:700 800;font-display:swap}
 @font-face{font-family:Cairo;src:url(fonts/Cairo-Black.ttf) format('truetype');font-weight:900;font-display:swap}
-.t-dark{--bg:#141414;--p:#1F1F1D;--p2:#2A2A28;--ln:#3A3A36;--tx:#F5F5F0;--mu:#A3A39C;--ac:#C3FA4F;--act:#C3FA4F;--onac:#141414;--bad:#FFB4A8}
-.t-light{--bg:#F5F5F0;--p:#FFFFFF;--p2:#EDEDE6;--ln:#DADAD3;--tx:#141414;--mu:#5E5E59;--ac:#C3FA4F;--act:#141414;--onac:#141414;--bad:#A12A12}
+.t-dark{--bg:#000000;--p:#1F1F1D;--p2:#2A2A28;--ln:#3A3A36;--tx:#FFFFFF;--mu:#A3A39C;--ac:#C8F03C;--act:#C8F03C;--onac:#000000;--bad:#FFB4A8}
+.t-light{--bg:#FFFFFF;--p:#FFFFFF;--p2:#EDEDE6;--ln:#DADAD3;--tx:#000000;--mu:#5E5E59;--ac:#C8F03C;--act:#000000;--onac:#000000;--bad:#A12A12}
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
 body{background:var(--bg);color:var(--tx);font-family:Cairo,Tahoma,sans-serif;font-size:15px;line-height:1.6}
@@ -66,7 +66,7 @@ main{flex:999 1 560px;min-width:0;padding:24px 32px 40px;display:flex;flex-direc
 .bar{height:10px;background:var(--ln);border-radius:999px;overflow:hidden}
 .bar i{display:block;height:100%;background:var(--ac)}
 .chk{display:flex;align-items:center;gap:10px;min-height:44px;cursor:pointer}
-.chk input{width:20px;height:20px;accent-color:#C3FA4F}
+.chk input{width:20px;height:20px;accent-color:var(--ac)}
 .done{text-decoration:line-through;color:var(--mu)}
 .warn{background:var(--p);border:1px solid var(--bad);color:var(--bad);border-radius:10px;padding:12px 16px;font-size:14px}
 .form{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
@@ -138,15 +138,15 @@ main{flex:999 1 560px;min-width:0;padding:24px 32px 40px;display:flex;flex-direc
 
 /* ---------- شاشة البداية ---------- */
 html.intro-on, html.intro-on body{overflow:hidden}
-#intro{position:fixed;inset:0;z-index:100;background:#141414;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;transition:opacity .55s ease, transform .55s ease;font-family:Cairo,system-ui,sans-serif}
+#intro{position:fixed;inset:0;z-index:100;background:#000000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;transition:opacity .55s ease, transform .55s ease;font-family:Cairo,system-ui,sans-serif}
 #intro.out{opacity:0;transform:scale(1.04);pointer-events:none}
-#intro .i-glow{position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(195,250,79,.22),rgba(195,250,79,0) 65%);animation:iglow 2.4s ease-out both}
-#intro .i-box{position:relative;width:132px;height:132px;border-radius:34px;background:#C3FA4F;display:flex;align-items:center;justify-content:center;box-shadow:0 18px 50px rgba(195,250,79,.25);animation:ibox .7s cubic-bezier(.2,1.3,.4,1) both}
+#intro .i-glow{position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(200,240,60,.22),rgba(200,240,60,0) 65%);animation:iglow 2.4s ease-out both}
+#intro .i-box{position:relative;width:132px;height:132px;border-radius:34px;background:#C8F03C;display:flex;align-items:center;justify-content:center;box-shadow:0 18px 50px rgba(200,240,60,.25);animation:ibox .7s cubic-bezier(.2,1.3,.4,1) both}
 #intro .i-box img{height:76%;width:auto;animation:ilogo .9s .15s ease-out both}
 #intro .i-word{position:relative;height:84px;display:flex;align-items:center}
-#intro #i-text{font-size:64px;font-weight:900;color:#F5F5F0;line-height:1;display:inline-block}
+#intro #i-text{font-size:64px;font-weight:900;color:#FFFFFF;line-height:1;display:inline-block}
 #intro #i-text.pop{animation:ipop .35s ease-out}
-#intro .i-sub{position:relative;font-size:18px;font-weight:700;letter-spacing:.3em;color:#C3FA4F;opacity:0;animation:isub .6s 1.35s ease-out forwards}
+#intro .i-sub{position:relative;font-size:18px;font-weight:700;letter-spacing:.3em;color:#C8F03C;opacity:0;animation:isub .6s 1.35s ease-out forwards}
 @keyframes ibox{from{transform:scale(.4) rotate(-12deg);opacity:0}to{transform:none;opacity:1}}
 @keyframes ilogo{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
 @keyframes ipop{from{transform:translateY(8px);filter:blur(4px);opacity:.3}to{transform:none;filter:none;opacity:1}}
@@ -190,7 +190,7 @@ html.intro-on, html.intro-on body{overflow:hidden}
 .auth .btn.pri{transition:transform .15s ease, box-shadow .2s ease}
 .auth .btn.pri:active{transform:scale(.97)}
 .auth input{transition:border-color .2s ease, box-shadow .2s ease}
-.auth input:focus{box-shadow:0 0 0 3px rgba(195,250,79,.25)}
+.auth input:focus{box-shadow:0 0 0 3px rgba(200,240,60,.25)}
 @media (prefers-reduced-motion: reduce){#intro *,.auth .card,.auth .card>*,.a-bg i,.l-ring::before,.l-ring img,.dots i{animation:none!important}.dots i{opacity:1}}
 
 /* شاشة الدخول أكبر */

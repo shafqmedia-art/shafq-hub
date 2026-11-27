@@ -44,16 +44,16 @@
     SRV.push(db).catch(function (e) { toast('تعذر الحفظ: ' + e.message); return resync(); });
   }
   function resync() { return SRV.pull().then(function (d) { db = d; if (me() && me().role === 'member' && route().indexOf('#/team-plan/') !== 0) resetTeamPlans(); if (me() && me().role === 'client') pstate.data = null; render(); }).catch(function () { if (!SRV.hasSession()) render(); }); }
-  function checkSetup() {
-    state.ready = false; render();
-    return SRV.hasManager().then(function (b) { state.needSetup = !b; state.err = ''; }, function (e) { state.err = e.message; }).then(function () { state.ready = true; render(); });
+  function openEmailEntry() {
+    var hash = location.hash;
+    location.replace('../' + (hash ? '?view=' + encodeURIComponent(hash) : ''));
   }
   function boot() {
     state.err = ''; state.ready = false; render();
-    if (!SRV.hasSession()) return checkSetup();
+    if (!SRV.hasSession()) return openEmailEntry();
     return SRV.pull().then(function (d) { db = d; state.ready = true; render(); }, function (e) {
       if (e.offline) { state.err = e.message; state.ready = true; render(); return; }
-      SRV.clear(); return checkSetup();
+      SRV.clear(); return openEmailEntry();
     });
   }
   function byId(t, id) { return db[t].filter(function (r) { return r.id === id; })[0]; }
@@ -109,7 +109,7 @@
     ['العمل', [['العملاء', '#/clients'], ['المشاريع', '#/m/projects'], ['الدرون', '#/m/drone']]],
     ['الناس', [['الفريق', '#/team'], ['فريلانس', '#/m/talent'], ['بنك المؤثرين', '#/m/influencers'], ['العملاء المحتملون', '#/m/leads'], ['صندوق الطلبات', '#/m/inbox']]],
     ['المال', [['المالية', '#/finance'], ['الأوراق', '#/m/papers'], ['التقارير', '#/reports']]],
-    ['الأدوات', [['المعدات', '#/m/gear'], ['التسويق', ''], ['ميتا', ''], ['المراسل', '#/reporter']]]
+    ['الأدوات', [['المعدات', '#/m/gear'], ['التسويق', ''], ['ميتا', ''], ['شفق بوت', '#/bot'], ['المراسل', '#/reporter']]]
   ];
   var MNAV = [['اليوم', '#/'], ['مهامي', '#/tasks'], ['العملاء', '#/clients'], ['مالي', '#/money'], ['ملفي', '#/profile']];
   var TI = {"bell": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 1.5h-15z\"/><path d=\"M10 20.5a2 2 0 0 0 4 0\"/></svg>", "cal": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"4\" y=\"5\" width=\"16\" height=\"15\" rx=\"2\"/><path d=\"M4 10h16M9 3v4M15 3v4\"/></svg>", "send": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M20.5 3.5 3.5 10.6l6.8 2.6 2.6 6.8z\"/><path d=\"m10.3 13.2 4.4-4.4\"/></svg>", "sun": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4\"/></svg>", "moon": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z\"/></svg>", "home": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 10.5 12 4l8 6.5V20h-5v-6H9v6H4z\"/></svg>", "tasks": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"2\"/><path d=\"m8 12 3 3 5-6\"/></svg>", "users": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"9\" cy=\"9\" r=\"3.2\"/><path d=\"M3.5 19c.6-3 2.8-4.6 5.5-4.6s4.9 1.6 5.5 4.6\"/><path d=\"M15.5 6.2a3 3 0 0 1 0 5.6M17.5 14.6c1.6.6 2.7 2 3 4.4\"/></svg>", "money": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"3\" y=\"6\" width=\"18\" height=\"12\" rx=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"2.6\"/><path d=\"M6.5 9.5v5M17.5 9.5v5\"/></svg>", "more": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 7h16M4 12h16M4 17h16\"/></svg>", "user": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"8.5\" r=\"3.6\"/><path d=\"M5 20c.8-3.6 3.6-5.6 7-5.6s6.2 2 7 5.6\"/></svg>", "x": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M6 6l12 12M18 6 6 18\"/></svg>"};
@@ -476,7 +476,7 @@
     var d = memberDue(u), open = db.tasks.filter(function (t) { return t.user_id === u.id && !t.done; }).length, pays = memberPays(u);
     var body = rows([['الهاتف', '<span class="ltr">' + h(u.phone || '') + '</span>'], ['شام كاش', u.shamcash ? '<span class="ltr">' + h(u.shamcash) + '</span>' : 'غير محدد'], ['قيمة العقد', '<span class="ltr">' + h(usd(d.contract)) + '</span>'], ['المدفوع', '<span class="ltr">' + h(usd(d.paid)) + '</span>'], ['المتبقي', '<span class="ltr">' + h(usd(d.left)) + '</span>'], ['مهام مفتوحة', String(open)]]);
     if (pays.length) body += '<div class="paylog"><h3>الدفعات</h3>' + pays.slice(0, 6).map(function (m) { return '<div><span>' + h(dateAr(m.date)) + (m.note ? ' · ' + h(m.note) : '') + '</span><span><b class="ltr">' + h(usd(m.usd)) + '</b> <em class="paid">تم القبض</em></span></div>'; }).join('') + '</div>';
-    body += '<div class="acts">' + btn('دفع له', 'addMove', { user: u.id }, 'sm pri') + '<a class="btn sm" target="_blank" rel="noopener" href="' + h(waLink(u)) + '">واتساب</a>' + (ONLINE ? btn('إشعار', 'sendNote', { uid: u.id }, 'sm') : '') + btn('تعديل', 'editMember', { id: u.id }, 'sm') + btn(u.active === false ? 'تفعيل' : 'إيقاف', 'toggleMember', { id: u.id }, 'sm') + '</div>';
+    body += '<div class="acts">' + btn('دفع له', 'addMove', { user: u.id }, 'sm pri') + '<a class="btn sm" target="_blank" rel="noopener" href="' + h(waLink(u)) + '">واتساب</a>' + (ONLINE ? btn('إشعار', 'sendNote', { uid: u.id }, 'sm') : '') + btn('تعديل', 'editMember', { id: u.id }, 'sm') + (ONLINE ? btn('ربط إيميل الدخول', 'linkLoginEmail', { id: u.id }, 'sm') : '') + btn(u.active === false ? 'تفعيل' : 'إيقاف', 'toggleMember', { id: u.id }, 'sm') + '</div>';
     return '<details class="mrow' + (u.active === false ? ' off' : '') + '"><summary>' + avatar(u) + '<span class="mr-main"><b>' + h(u.name) + '</b><small>' + h(tags(u.title).join(' · ') || 'بدون اختصاص') + (u.active === false ? ' · موقوف' : '') + '</small></span><span class="mr-due"><small>المتبقي</small><b class="ltr">' + h(usd(d.left)) + '</b></span>' + CHEV + '</summary><div class="mr-body">' + body + '</div></details>';
   }
   function vTeam() {
@@ -526,9 +526,9 @@
   function vProfile() {
     var u = me();
     function f(k, label, type, wide) { return '<div class="fld' + (wide ? ' wide' : '') + '"><label for="p_' + k + '">' + label + '</label>' + (type === 'area' ? '<textarea id="p_' + k + '" name="' + k + '">' + h(u[k]) + '</textarea>' : '<input id="p_' + k + '" name="' + k + '" type="' + (type || 'text') + '" value="' + h(u[k]) + '">') + '</div>'; }
-    var c = head('الملف الشخصي', isMgr() ? 'المدير · يرى كل شيء' : 'عضو الفريق', btn('تسجيل الخروج', 'logout'));
+    var c = head('الملف الشخصي', isMgr() ? 'المدير · يرى كل شيء' : 'عضو الفريق', btn('تسجيل الخروج', 'logout') + (ONLINE && isMgr() ? btn('ربط إيميل الدخول', 'linkLoginEmail', { id: u.id }) : ''));
     c += '<div class="tiles"><section class="tile" style="padding:24px;display:flex;flex-direction:column;align-items:center;gap:12px"><span class="av" style="width:140px;height:140px;font-size:56px;border-width:3px">' + (u.photo ? '<img src="' + h(u.photo) + '" alt="صورة الملف الشخصي">' : h((u.name || '؟').charAt(0))) + '</span><b style="font-size:20px">' + h(u.name) + '</b><span class="mu">' + h(u.title || '') + '</span><div class="acts"><label class="btn pri" for="photo">رفع صورة</label><input id="photo" type="file" accept="image/*" data-chg="photo" hidden>' + (u.photo ? btn('حذف الصورة', 'delPhoto') : '') + '</div></section>';
-    c += '<section class="tile" style="padding:24px;grid-column:span 2;min-width:0"><form class="form" data-form="profile">' + f('name', 'الاسم') + f('title', 'الصفة أو العنوان') + '<div class="fld"><label for="p_gender">الجنس</label><select id="p_gender" name="gender"><option value="m"' + (u.gender !== 'f' ? ' selected' : '') + '>ذكر</option><option value="f"' + (u.gender === 'f' ? ' selected' : '') + '>أنثى</option></select></div>' + f('phone', 'رقم التواصل' + (ONLINE && u.login_phone ? ' (رقم الدخول: ' + u.login_phone + ')' : ''), 'tel') + f('email', 'الإيميل', 'email') + f('city', 'المدينة') + f('insta', 'حساب إنستغرام') + f('bio', 'نبذة', 'area', true) + '<div class="fld wide"><p class="err" id="perr"></p><div class="acts"><button class="btn pri" type="submit">حفظ التعديلات</button>' + btn('تغيير كلمة السر', 'chPass') + '</div></div></form></section></div>';
+    c += '<section class="tile" style="padding:24px;grid-column:span 2;min-width:0"><form class="form" data-form="profile">' + f('name', 'الاسم') + f('title', 'الصفة أو العنوان') + '<div class="fld"><label for="p_gender">الجنس</label><select id="p_gender" name="gender"><option value="m"' + (u.gender !== 'f' ? ' selected' : '') + '>ذكر</option><option value="f"' + (u.gender === 'f' ? ' selected' : '') + '>أنثى</option></select></div>' + f('phone', 'رقم التواصل', 'tel') + f('email', 'الإيميل', 'email') + f('city', 'المدينة') + f('insta', 'حساب إنستغرام') + f('bio', 'نبذة', 'area', true) + '<div class="fld wide"><p class="err" id="perr"></p><div class="acts"><button class="btn pri" type="submit">حفظ التعديلات</button>' + btn('تغيير كلمة السر', 'chPass') + '</div></div></form></section></div>';
     c += pushTile();
     if (isMgr() && ONLINE) c += tile('سجل النشاط', 'مين غيّر شو ومتى', '<p class="mu">كل إضافة أو تعديل أو حذف على المال والعملاء والفريق بينسجل هون، وما حدا بيقدر يمسحه من التطبيق.</p><div class="acts">' + btn('عرض آخر 60 نشاط', 'auditShow', {}, 'pri') + '</div>');
     if (isMgr()) c += tile('بوابة العملاء', 'رقم الواتساب: ' + h(db.settings.shafq_phone || me().phone || 'غير محدد'), '<p class="mu">زر «شو صار معكم؟» عند المنشور المتأخر، وزر «تواصل مع شفق» في بوابة العميل، يفتحان واتساب على هذا الرقم.</p><div class="acts"><label for="shafqph" class="mu">رقم شفق</label><input id="shafqph" type="tel" data-chg="shafqph" value="' + h(db.settings.shafq_phone || me().phone || '') + '" style="min-height:44px;padding:0 16px;background:var(--p2);border:1px solid var(--ln);border-radius:999px"></div>');
@@ -595,7 +595,7 @@
     theme: function () { var l = document.body.classList.toggle('t-light'); document.body.classList.toggle('t-dark', !l); localStorage.setItem(TKEY, l ? 'light' : 'dark'); themeMeta(); render(); },
     moreNav: function () { document.body.classList.toggle('navopen'); },
     msgAdmin: function (d) { if (isMgr()) return; msgAdminForm(d.kind); },
-    logout: function () { resetTeamPlans(); try { localStorage.removeItem(NKEY); if (window.indexedDB) indexedDB.deleteDatabase('shafq-notes'); } catch (e) {} pstate.data = null; pstate.month = ''; if (ONLINE) { SRV.idle().then(pushOff).then(function () { return SRV.signOut(); }).then(function () { db = blank(); location.hash = '#/'; checkSetup(); }); return; } localStorage.removeItem(SKEY); location.hash = '#/'; render(); },
+    logout: function () { resetTeamPlans(); try { localStorage.removeItem(NKEY); if (window.indexedDB) indexedDB.deleteDatabase('shafq-notes'); } catch (e) {} pstate.data = null; pstate.month = ''; if (ONLINE) { SRV.idle().then(pushOff).then(function () { return SRV.signOut(); }).then(function () { db = blank(); location.replace('../'); }); return; } localStorage.removeItem(SKEY); location.hash = '#/'; render(); },
     retry: function () { boot(); },
     addClient: function () { clientForm(null); },
     editClient: function (d) { clientForm(byId('clients', d.id)); },
@@ -616,6 +616,18 @@
     },
     addMember: function () { memberForm(null); },
     editMember: function (d) { memberForm(byId('users', d.id)); },
+    linkLoginEmail: function (d) {
+      if (!ONLINE || !isMgr()) return;
+      var user = byId('users', d.id);
+      if (!user) return;
+      openForm('ربط إيميل الدخول لـ ' + user.name, [
+        { k: 'email', label: 'إيميل الدخول', type: 'email', req: true, value: user.email }
+      ], function (values) {
+        return SRV.setLoginEmail(user.id, values.email.trim()).then(function () {
+          return 'تم ربط الإيميل. يمكنه الدخول من موقع شفق برمز التحقق.';
+        }, function (error) { return { err: error.message }; });
+      }, 'الإيميل يصبح طريقة الدخول لهذا الحساب. تأكد من العنوان قبل الحفظ.', 'ربط الإيميل');
+    },
     toggleMember: function (d) { var u = byId('users', d.id); u.active = u.active === false; save(); render(); toast(u.active ? 'تم التفعيل' : 'تم الإيقاف'); },
     addTask: function (d) {
       openForm('مهمة جديدة', [{ k: 'title', label: 'المهمة', req: true, wide: true }, { k: 'user_id', label: 'لمن', type: 'select', options: memberOpts(), value: me().id }, { k: 'client_id', label: 'العميل', type: 'select', options: clientOpts(), value: d.client || '' }, { k: 'due', label: 'موعد التسليم', type: 'date', value: today(), req: true }], function (v) {
@@ -718,7 +730,7 @@
         var nu; if (edit) { Object.assign(u, o, { pass: hh, salt: salt }); nu = u; } else { nu = Object.assign({ id: uid(), role: 'member', active: true, pass: hh, salt: salt }, o); db.users.push(nu); }
         linkTalent(nu); return 'حُفظ العضو';
       });
-    }, edit ? '' : 'العضو يدخل برقم موبايله وكلمة السر المؤقتة، ثم يغيّرها من ملفه.');
+    }, edit ? '' : ONLINE ? 'بعد إنشاء العضو، اربط إيميله ليقدر يدخل من موقع شفق.' : 'العضو يدخل برقم موبايله وكلمة السر المؤقتة.');
   }
 
 
@@ -1049,7 +1061,7 @@
 
   /* ---------- بوابة العميل ---------- */
   function clientUser(cl) { return db.users.filter(function (u) { return u.role === 'client' && u.client_id === cl.id; })[0]; }
-  function clientLoginBtn(cl) { var u = clientUser(cl); return u ? btn(u.active === false ? 'تفعيل دخول العميل' : 'إيقاف دخول العميل', 'toggleClientLogin', { uid: u.id }) + (ONLINE ? btn('كلمة سر العميل', 'clientPass', { uid: u.id }) : '') : btn('إنشاء دخول للعميل', 'clientLogin', { id: cl.id }); }
+  function clientLoginBtn(cl) { var u = clientUser(cl); return u ? btn(u.active === false ? 'تفعيل دخول العميل' : 'إيقاف دخول العميل', 'toggleClientLogin', { uid: u.id }) + (ONLINE ? btn('ربط إيميل الدخول', 'linkLoginEmail', { id: u.id }) : '') : btn('إنشاء دخول للعميل', 'clientLogin', { id: cl.id }); }
   function clientLoginForm(cl) {
     openForm('دخول العميل: ' + cl.name, [{ k: 'phone', label: 'رقم موبايل العميل (اسم المستخدم)', type: 'tel', req: true }, { k: 'pass', label: 'كلمة السر', type: 'password', req: true }], function (v) {
       var ph = normPhone(v.phone); if (!ph) return { err: 'أدخل رقم موبايل صحيحاً.' };
@@ -1058,7 +1070,7 @@
       var o = { role: 'client', client_id: cl.id, name: cl.name, title: 'عميل', phone: v.phone.trim(), login_phone: ph, active: true, kind: '', contract: 0 };
       if (ONLINE) return SRV.createUser(v.phone, v.pass).then(function (id) { db.users.push(Object.assign({ id: id }, o)); return 'أُنشئ دخول العميل'; });
       var salt = uid(); return hash(v.pass, salt).then(function (hh) { db.users.push(Object.assign({ id: uid(), pass: hh, salt: salt }, o)); return 'أُنشئ دخول العميل'; });
-    }, 'العميل يدخل من رابط النظام نفسه برقمه وكلمة السر، ويرى بوابته فقط: خطة النشر وحسابه ودفعاته.');
+    }, ONLINE ? 'بعد إنشاء الحساب، اربط إيميل العميل ليقدر يدخل برمز التحقق من موقع شفق.' : 'العميل يدخل برقمه وكلمة السر ويرى بوابته.');
   }
   function portalLocal(cid) {
     var c = byId('clients', cid) || {};
@@ -1625,13 +1637,14 @@
     var app = document.getElementById('app'), r = route(), html;
     if (ONLINE && !state.ready) html = vLoading();
     else if (ONLINE && state.err) html = authCard('<h1>تعذر الاتصال</h1><p>' + h(state.err) + '</p>' + btn('إعادة المحاولة', 'retry', {}, 'pri'));
-    else if (ONLINE && !SRV.hasSession()) html = state.needSetup ? vSetup() : fstate.open ? vForgot() : vLogin();
-    else if (ONLINE && !me()) html = authCard('<h1>الحساب غير مفعّل</h1><p>هذا الحساب لا يملك ملفاً في النظام أو تم إيقافه. راجع المدير.</p>' + btn('تسجيل الخروج', 'logout'));
+    else if (ONLINE && !SRV.hasSession()) { openEmailEntry(); return; }
+    else if (ONLINE && !me()) { location.replace('../portal.html'); return; }
     else if (!ONLINE && !db.users.length) html = vSetup();
     else if (!ONLINE && !me()) html = vLogin();
     else if (r === '#/notes') html = vNotes();
     else if (me().role === 'client') html = vPortal();
     else if (!isMgr()) { if (r === '#/team-plans') html = vTeamPlans(); else if (/^#\/team-plan\/[a-z0-9-]+$/i.test(r)) html = vTeamPlan(r.slice(12)); else if (r === '#/profile') html = vProfile(); else if (r === '#/tasks') html = vMemberTasks(); else if (r === '#/clients') html = vMemberClients(); else if (r === '#/money') html = vMemberMoney(); else if (r.indexOf('#/mc/') === 0) html = vMemberClient(decodeURIComponent(r.slice(5))); else if (r === '#/' || r === '') html = vMemberHome(); else { location.hash = '#/'; return; } }
+    else if (r === '#/bot') html = shell(head('شفق بوت', 'إدارة ردود صفحات السوشال ميديا') + '<section class="tile"><a class="btn pri" href="https://bot.shafqmedia.com/">فتح لوحة شفق بوت</a></section>');
     else if (r === '#/clients') html = vClients();
     else if (/^#\/client\/[^/]+\/plan$/.test(r)) html = vClientPlan(r.slice(9, -5));
     else if (r.indexOf('#/client/') === 0) html = vClient(r.slice(9));
@@ -1654,7 +1667,7 @@
     tick();
   }
   function enter() { var a = document.getElementById('app'); if (!a) return; a.classList.remove('enter'); void a.offsetWidth; a.classList.add('enter'); clearTimeout(enter.t); enter.t = setTimeout(function () { a.classList.remove('enter'); }, 900); }
-  function themeMeta() { var c = document.body.classList.contains('t-light') ? '#F5F5F0' : '#141414'; var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', c); }
+  function themeMeta() { var c = window.getComputedStyle(document.body).getPropertyValue('--bg').trim(); var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', c); }
   function tick() { var c = document.getElementById('clock'); if (c) { var d = new Date(), t = pad(d.getHours()) + ':' + pad(d.getMinutes()); if (c.textContent !== t) c.textContent = t; } }
   function start() {
     if (localStorage.getItem(TKEY) === 'light') { document.body.classList.remove('t-dark'); document.body.classList.add('t-light'); } themeMeta();

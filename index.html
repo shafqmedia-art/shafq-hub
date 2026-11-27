@@ -1,266 +1,60 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://drive.google.com https://*.googleusercontent.com; media-src 'self' blob:; connect-src 'self' https://ypsarmfjbkxgoepmibia.supabase.co https://script.google.com https://script.googleusercontent.com; frame-src https://drive.google.com; object-src 'none'; base-uri 'self'; form-action 'none'">
-<meta name="referrer" content="strict-origin-when-cross-origin">
-<title>شفق ميديا | وكالة تسويق ومحتوى من دمشق</title>
-<meta name="description" content="شفق ميديا وكالة تسويق ومحتوى من دمشق. ندير حساباتك على وسائل التواصل، ونصوّر مشاريعك وفعالياتك، ونبني لك خطة محتوى تحقق النتيجة.">
-<meta property="og:title" content="شفق ميديا | وكالة تسويق ومحتوى">
-<meta property="og:description" content="كل يوم شفق جديد لعلامتك.">
-<meta property="og:image" content="https://shafqmedia.com/assets/og.jpg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:url" content="https://shafqmedia.com/">
-<meta property="og:type" content="website">
-<meta property="og:locale" content="ar_SY">
-<meta property="og:site_name" content="شفق ميديا">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="canonical" href="https://shafqmedia.com/">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "ProfessionalService", "name": "شفق ميديا", "alternateName": "Shafq Media", "url": "https://shafqmedia.com/", "logo": "https://shafqmedia.com/assets/icon-192.png", "image": "https://shafqmedia.com/assets/og.jpg", "description": "وكالة تسويق ومحتوى من دمشق: إدارة حسابات التواصل، إنتاج الفيديو، التصوير الجوي، وتغطية المؤتمرات والمعارض.", "email": "shafqmedia@gmail.com", "address": {"@type": "PostalAddress", "addressLocality": "دمشق", "addressCountry": "SY"}, "areaServed": "SY", "sameAs": ["https://www.instagram.com/shafq.media"]}</script>
-<meta name="theme-color" content="#121212">
-<link rel="icon" type="image/png" href="assets/icon-192.png">
-<link rel="apple-touch-icon" href="assets/apple-touch-180.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=10">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#000000">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://*.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>إنشاء حساب أو تسجيل الدخول | شفق</title>
+<link rel="icon" href="assets/icon-192.png">
+<link rel="stylesheet" href="assets/login.css">
+<script src="shafq-app/config.js" defer></script>
+<script src="shafq-app/server.js" defer></script>
+<script src="assets/login.js" defer></script>
 </head>
 <body>
-
-<header class="nav" id="nav">
-  <div class="wrap">
-    <a class="lg" href="#top" aria-label="شفق ميديا، العودة للأعلى"><img src="assets/logo-white.png" alt="شعار شفق ميديا" width="213" height="437"></a>
-    <nav class="links" aria-label="القائمة الرئيسية">
-      <a href="#services">الخدمات</a>
-      <a href="#work" data-work-link hidden>أعمالنا</a>
-      <a href="#process">كيف نعمل</a>
-      <a href="#pricing">الأسعار</a>
-      <a href="#bot">شفق بوت</a>
-      <a href="#contact">تواصل معنا</a>
-    </nav>
-    <div class="nav-act"><a class="login-n" href="shafq-app/" title="دخول فريق شفق وعملائها"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>دخول</span></a><a class="btn btn-p cta-n" href="request/index.html">ابدأ مشروعك</a></div>
-    <button class="burger" id="burger" aria-label="فتح القائمة" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
-  </div>
-</header>
-<div class="mmenu" id="mmenu">
-  <a href="#services">الخدمات</a>
-  <a href="#work" data-work-link hidden>أعمالنا</a>
-  <a href="#process">كيف نعمل</a>
-  <a href="#pricing">الأسعار</a>
-  <a href="#bot">شفق بوت</a>
-  <a href="#contact">تواصل معنا</a>
-  <a href="shafq-app/">دخول الفريق والعملاء</a>
-  <a class="btn btn-p" href="request/index.html">ابدأ مشروعك</a>
-</div>
-
-<main id="top">
-
-<section class="hero">
-  <div class="wrap">
-    <img class="lgo rv" src="assets/logo-white.png" alt="شعار شفق ميديا" width="213" height="437">
-    <h1 class="rv">كل يوم شفق جديد لعلامتك</h1>
-    <p class="rv">وكالة تسويق ومحتوى من دمشق. ندير حساباتك، ونصوّر مشاريعك وفعالياتك، ونبني لك خطة محتوى تحقق النتيجة.</p>
-    <div class="cta rv">
-      <a class="btn btn-p" href="request/index.html">اطلب خدمتك</a>
-      <a class="btn btn-o" href="#services" data-alt-work>شاهد خدماتنا</a>
+<main class="entry">
+  <section class="brand" aria-label="شفق ميديا">
+    <div class="brand-lockup">
+      <img src="assets/logo-white.png" alt="" width="426" height="874">
+      <span>شفق ميديا</span>
     </div>
-  </div>
-</section>
-
-<section class="about" id="about">
-  <div class="wrap">
-    <div class="grid one">
-      <div class="rv">
-        <div class="eyebrow">من نحن</div>
-        <h2>شريكك في المحتوى</h2>
-        <p class="body">شفق ميديا وكالة تسويق عبر وسائل التواصل الاجتماعي من دمشق. نعمل مع المطاعم والعيادات والمتاجر والشركات وأصحاب العلامات الشخصية، ونبني لكل عميل خطة محتوى واضحة بدلاً من منشورات متفرقة.</p>
-        <p class="body">نبدأ دائماً بفهم عملك وجمهورك قبل أي تصوير، ثم نضع خطة شهرية تعرف فيها ماذا سيُنشر ومتى. فريقنا يصوّر وينتج في الميدان، من المحتوى اليومي إلى التصوير الجوي وتغطية الفعاليات، وننشر في المواعيد المتفق عليها، ونراجع معك النتائج كل شهر لنطوّر الخطة.</p>
-      </div>
-    </div>
-    <div class="vm">
-      <div class="card hov rv"><div class="k">الرؤية</div><div class="v">أن نكون أول اسم يخطر ببالك عندما تريد أن تُعرف وتكبر.</div></div>
-      <div class="card hov rv"><div class="k">الرسالة</div><div class="v">نحوّل أهدافك إلى محتوى مدروس يصل إلى الناس الصحيحين، ويحقق النتيجة التي تطمح إليها.</div></div>
-    </div>
-  </div>
-</section>
-
-<section id="services">
-  <div class="wrap">
-    <div class="head c rv"><div class="eyebrow">الخدمات</div><h2>خدماتنا</h2><p class="lead">كل ما تحتاجه علامتك في مكان واحد.</p></div>
-    <div class="svc" id="svc"></div>
-  </div>
-</section>
-
-<section id="work" hidden>
-  <div class="wrap">
-    <div class="head rv"><div class="eyebrow">أعمالنا</div><h2>أعمالنا</h2><p class="lead">نماذج من مشاريع نفّذناها لعملائنا.</p></div>
-    <div class="filters rv" id="filters"></div>
-    <div class="wgrid" id="wgrid"></div>
-  </div>
-</section>
-
-<section id="clients">
-  <div class="wrap">
-    <div class="head c rv"><div class="eyebrow">قطاعاتنا</div><h2>من نخدم</h2><p class="lead">أياً كان مجالك، نبني لك المحتوى المناسب لجمهورك.</p></div>
-    <div class="aud rv">
-      <span class="hov"><i class="kf">الشركات والمؤسسات</i></span><span class="hov"><i class="kf">المؤتمرات والمعارض</i></span><span class="hov"><i class="kf">المتاجر والعلامات التجارية</i></span><span class="hov"><i class="kf">المطاعم والمقاهي</i></span>
-      <span class="hov"><i class="kf">العيادات والصيدليات</i></span><span class="hov"><i class="kf">العلامات الشخصية</i></span><span class="hov"><i class="kf">العقارات والإنشاءات</i></span><span class="hov"><i class="kf">المدارس والجامعات</i></span>
-    </div>
-  </div>
-</section>
-
-<section id="process">
-  <div class="wrap">
-    <div class="head c rv"><div class="eyebrow">كيف نعمل</div><h2>كيف نعمل</h2><p class="lead">أربع خطوات واضحة، ونطوّر النتائج كل شهر.</p></div>
-    <div class="steps">
-      <div class="card hov rv"><div class="no">01</div><div class="t">نسمع أفكارك</div><div class="d"><i class="kf" data-kf="steps">نفهم مشروعك وأهدافك.</i></div></div>
-      <div class="card hov rv"><div class="no">02</div><div class="t">نخطط محتواك</div><div class="d"><i class="kf" data-kf="steps">خطة شهرية توافق عليها.</i></div></div>
-      <div class="card hov rv"><div class="no">03</div><div class="t">نصوّر وننشر</div><div class="d"><i class="kf" data-kf="steps">تصوير احترافي ونشر منتظم.</i></div></div>
-      <div class="card hov rv"><div class="no">04</div><div class="t">نطوّر خطتك</div><div class="d"><i class="kf" data-kf="steps">تقرير شهري وتحسين مستمر.</i></div></div>
-    </div>
-  </div>
-</section>
-
-<section id="rules">
-  <div class="wrap">
-    <div class="head c rv"><div class="eyebrow">مبادئنا</div><h2>قواعدنا الخمس</h2><p class="lead">لا نتنازل عنها في أي مشروع.</p></div>
-    <div class="rules">
-      <div class="card hov rv"><div class="no">01</div><div class="t"><i class="kf" data-kf="rules">محتوى نظيف</i></div><div class="d"><i class="kf" data-kf="rulesd">نلتزم بالضوابط الدينية والأخلاقية في كل ما ننتجه.</i></div></div>
-      <div class="card hov rv"><div class="no">02</div><div class="t"><i class="kf" data-kf="rules">الخطة قبل الكاميرا</i></div><div class="d"><i class="kf" data-kf="rulesd">لا نصوّر قبل أن نعرف الهدف ونفهم الجمهور.</i></div></div>
-      <div class="card hov rv"><div class="no">03</div><div class="t"><i class="kf" data-kf="rules">مراجعة الأرقام</i></div><div class="d"><i class="kf" data-kf="rulesd">نراجع النتائج كل شهر ونطوّر الخطة على أساسها.</i></div></div>
-      <div class="card hov rv"><div class="no">04</div><div class="t"><i class="kf" data-kf="rules">سرعة في التسليم</i></div><div class="d"><i class="kf" data-kf="rulesd">نسلّم في الموعد، ومحتوى الفعاليات خلال أيام.</i></div></div>
-      <div class="card hov rv"><div class="no">05</div><div class="t"><i class="kf" data-kf="rules">قريبون منك</i></div><div class="d"><i class="kf" data-kf="rulesd">نفهم عملك ولغة جمهورك قبل أن نتحدث عنه.</i></div></div>
-    </div>
-  </div>
-</section>
-
-<section id="pricing">
-  <div class="wrap">
-    <div class="head c rv"><div class="eyebrow">الأسعار</div><h2>الباقات</h2><p class="lead">اختر الباقة المناسبة، وكلما طالت المدة زاد الخصم.</p></div>
-    <div style="text-align:center" class="rv"><div class="toggle" id="toggle" role="tablist" aria-label="مدة الاشتراك"></div></div>
-    <div class="plans" id="plans"></div>
-    <p class="pnote">الأسعار بالدولار أو ما يعادلها بالليرة السورية حسب سعر الصرف، ولا تشمل ميزانية الإعلانات الممولة. <span id="ratenote"></span> <a href="request/index.html?s=custom">تحتاج عرضاً مخصصاً لمشروعك؟ اطلبه من هنا</a></p>
-  </div>
-</section>
-
-<section class="botstrip" id="bot">
-  <div class="wrap">
-    <a class="card hov rv" href="https://bot.shafqmedia.com/">
-      <div><div class="k">شفق بوت</div><div class="t">ردود تلقائية على رسائل وتعليقات صفحتك على مدار الساعة.</div><div class="d">إنستغرام وفيسبوك ماسنجر، دون أن يفوتك أي عميل.</div></div>
-      <span class="btn btn-p">جرّبه مجاناً 7 أيام</span>
-    </a>
-  </div>
-</section>
-
-<section id="digital">
-  <div class="wrap">
-    <div class="head rv"><div class="eyebrow">الحلول الرقمية</div><h2>الحلول الرقمية</h2><p class="lead">نبني لك الأدوات التي تدير بها عملك.</p></div>
-    <div class="dg">
-      <a class="card hov rv" href="request/index.html?s=website"><div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 8h18M8 21h8"/></svg></div><div class="t">مواقع إلكترونية</div><div class="d">موقع سريع يعرّف بعملك.</div></a>
-      <a class="card hov rv" href="request/index.html?s=app"><div class="ico"><svg viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></svg></div><div class="t">تطبيقات جوال</div><div class="d">تطبيق باسمك على الهاتف.</div></a>
-      <a class="card hov rv" href="request/index.html?s=system"><div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div><div class="t">أنظمة إدارة</div><div class="d">فريقك وحساباتك في مكان واحد.</div></a>
-      <a class="card hov rv" href="request/index.html?s=bot"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg></div><div class="t">بوتات ردود</div><div class="d">ردود تلقائية على مدار الساعة.</div></a>
-    </div>
-    <div class="card demo rv">
-      <div>
-        <div class="k">مثال حي</div>
-        <h3>نظام شفق</h3>
-        <p>بنينا هذا النظام لإدارة فريقنا وعملائنا وحساباتنا. جرّبه بنفسك كمدير أو عضو فريق أو عميل، ثم اطلب نظاماً مثله لعملك.</p>
-        <div class="cta">
-          <a class="btn btn-p" href="demo/index.html">جرّب النظام بنفسك</a>
-          <a class="btn btn-o" href="request/index.html?s=system">اطلب نظاماً مثله</a>
-        </div>
-      </div>
-      <div class="mock" aria-hidden="true">
-        <div class="bar"><i></i><i></i><i></i></div>
-        <div class="body">
-          <div class="side"><span class="on"></span><span></span><span></span><span></span><span></span><span></span></div>
-          <div>
-            <div class="tiles">
-              <div class="tile l"><small>دخل الشهر</small><b>$10,400</b></div>
-              <div class="tile"><small>المصاريف</small><b>$3,150</b></div>
-              <div class="tile"><small>منشورات اليوم</small><b>4</b></div>
-            </div>
-            <div class="rows"><div></div><div></div><div></div><div></div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="contact" id="contact">
-  <div class="wrap">
-    <div class="grid">
-      <div class="rv">
-        <div class="eyebrow">تواصل معنا</div>
-        <h2>لديك مشروع؟<br><span>لنبدأ معاً.</span></h2>
-        <p class="lead">أرسل لنا فكرتك، ونعود إليك بخطة واضحة.</p>
-        <div class="ways">
-          <a class="card hov" data-wa="مرحباً شفق ميديا."><span class="ico"><svg viewBox="0 0 24 24"><path d="M20.5 11.6A8.5 8.5 0 0 1 8 19.1L3.5 20.5l1.4-4.3A8.5 8.5 0 1 1 20.5 11.6z"/><path d="M9 8.5c0 3.5 3 6.5 6.5 6.5"/></svg></span><span><b>راسلنا على واتساب</b><small>نرد عادة خلال ساعات العمل</small></span></a>
-          <a class="card hov" href="https://www.instagram.com/shafq.media" target="_blank" rel="noopener"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></svg></span><span><b>إنستغرام</b><small>@shafq.media</small></span></a>
-          <a class="card hov" href="mailto:shafqmedia@gmail.com"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span><span><b>البريد الإلكتروني</b><small>shafqmedia@gmail.com</small></span></a>
-        </div>
-      </div>
-      <form class="card rv" id="cform" novalidate>
-        <div class="f"><label for="cname">الاسم أو اسم الشركة</label><input id="cname" name="name" autocomplete="name" maxlength="80" required></div>
-        <div class="f"><label for="cphone">رقم الواتساب</label><input id="cphone" name="phone" type="tel" dir="ltr" autocomplete="tel" maxlength="20" placeholder="09xxxxxxxx"></div>
-        <div class="f"><label>الخدمة</label>
-          <div class="types" id="ctypes">
-            <button type="button" data-s="social">إدارة الحسابات</button><button type="button" data-s="video">إنتاج فيديو</button><button type="button" data-s="aerial">تصوير جوي</button><button type="button" data-s="events">مؤتمر أو معرض</button><button type="button" data-s="wedding">عرس أو مناسبة</button><button type="button" data-s="website">موقع أو نظام</button><button type="button" data-s="other">أخرى</button>
-          </div>
-        </div>
-        <div class="f"><label for="cmsg">رسالتك</label><textarea id="cmsg" name="msg" maxlength="1000" placeholder="أخبرنا باختصار عن مشروعك"></textarea></div>
-        <input class="hp" type="text" id="chw" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <div class="err" id="cerr" role="alert"></div>
-        <button class="btn btn-p" type="submit" id="csend">إرسال</button>
-        <p class="mut" style="font-size:13.5px;margin-top:10px;color:var(--mut)">للتفاصيل الكاملة استخدم <a href="request/index.html" style="color:var(--lime);font-weight:700">صفحة طلب الخدمة</a>.</p>
+    <div class="brand-line"><p>كل يوم شفق جديد لعلامتك</p></div>
+  </section>
+  <section class="access" aria-labelledby="title">
+    <div id="access-content">
+      <h1 id="title">تسجيل الدخول</h1>
+      <form id="email-form">
+        <p class="intro" id="email-intro">أدخل بريدك الإلكتروني لنرسل لك رمز الدخول.</p>
+        <label for="email">البريد الإلكتروني</label>
+        <input id="email" type="email" dir="ltr" autocomplete="email" required maxlength="254" aria-describedby="email-message">
+        <p id="email-message" class="field-message" role="status" hidden></p>
+        <button id="send-code" type="submit">إرسال رمز الدخول</button>
+        <div class="account-switch"><button id="switch-mode" class="secondary" type="button">جديد في شفق؟ أنشئ حساباً</button></div>
+      </form>
+      <form id="code-form" hidden>
+        <p id="delivery">أرسلنا رمز التحقق إلى <bdi id="delivery-address" dir="ltr"></bdi></p>
+        <label for="code">رمز الدخول</label>
+        <input id="code" type="text" inputmode="numeric" autocomplete="one-time-code" dir="ltr" required maxlength="6" minlength="6" aria-describedby="code-message">
+        <p id="code-message" class="field-message" role="status" hidden></p>
+        <button id="confirm-code" type="submit">تأكيد الدخول</button>
+        <div class="code-actions"><button id="edit" class="secondary" type="button">تعديل البريد</button><button id="resend" class="secondary" type="button">إعادة إرسال الرمز</button></div>
       </form>
     </div>
-  </div>
-</section>
-
-</main>
-
-<footer>
-  <div class="wrap">
-    <div class="grid">
-      <div>
-        <a class="lg" href="#top" aria-label="العودة للأعلى"><img src="assets/logo-white.png" alt="شعار شفق ميديا" width="213" height="437"></a>
-        <p>وكالة تسويق ومحتوى من دمشق.</p>
-        <div class="soc">
-          <a data-wa="مرحباً شفق ميديا." aria-label="واتساب"><svg viewBox="0 0 24 24"><path d="M20.5 11.6A8.5 8.5 0 0 1 8 19.1L3.5 20.5l1.4-4.3A8.5 8.5 0 1 1 20.5 11.6z"/><path d="M9 8.5c0 3.5 3 6.5 6.5 6.5"/></svg></a>
-          <a href="https://www.instagram.com/shafq.media" target="_blank" rel="noopener" aria-label="إنستغرام"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></svg></a>
-          <a href="mailto:shafqmedia@gmail.com" aria-label="البريد الإلكتروني"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></a>
-        </div>
+    <nav class="card-social" aria-label="قنوات التواصل مع شفق">
+      <div class="social-item">
+        <a href="https://wa.me/966563079286" target="_blank" rel="noopener" aria-label="محادثة شفق ميديا على واتساب">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="M12 2a9.8 9.8 0 0 0-8.5 14.7L2 22l5.5-1.4A9.8 9.8 0 1 0 12 2Zm0 17.9c-1.5 0-3-.4-4.2-1.1l-.3-.2-3.1.8.8-3-.2-.3A8.1 8.1 0 1 1 12 19.9Zm4.5-6.1-1.7-.8c-.2-.1-.4-.1-.6.1l-.7.9c-.1.2-.3.2-.5.1a6.5 6.5 0 0 1-3.3-2.9c-.2-.2 0-.4.1-.5l.5-.6c.1-.1.2-.3.1-.5l-.8-1.9c-.2-.5-.4-.5-.6-.5h-.5c-.2 0-.5.1-.7.4a2.6 2.6 0 0 0-.8 1.9c0 1.1.8 2.2.9 2.3.1.2 1.6 2.5 3.9 3.5.5.3.9.4 1.3.5.6.2 1.1.2 1.5.1.5-.1 1.5-.6 1.7-1.2.2-.5.2-.9.1-1l-.4-.2Z"/></svg>
+        </a>
       </div>
-      <nav aria-label="روابط"><h4>روابط</h4><a href="#services">الخدمات</a><a href="#pricing">الأسعار</a><a href="request/index.html">اطلب خدمتك</a><a href="terms/index.html">الشروط وسياسة الاسترجاع</a><a href="shafq-app/">دخول الفريق والعملاء</a></nav>
-      <nav aria-label="منتجاتنا"><h4>منتجاتنا</h4><a href="https://bot.shafqmedia.com/">شفق بوت</a><a href="demo/index.html">جرّب نظام شفق</a></nav>
-    </div>
-    <div class="copy"><span>© <span id="yr">2026</span> شفق ميديا. جميع الحقوق محفوظة.</span><span>دمشق، سوريا</span></div>
-  </div>
-</footer>
-
-<a class="fab" data-wa="مرحباً شفق ميديا." aria-label="راسلنا على واتساب"><svg viewBox="0 0 24 24"><path d="M20.5 11.6A8.5 8.5 0 0 1 8 19.1L3.5 20.5l1.4-4.3A8.5 8.5 0 1 1 20.5 11.6z"/><path d="M9 8.5c0 3.5 3 6.5 6.5 6.5"/></svg></a>
-
-<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mtitle">
-  <div class="box">
-    <div class="top"><div><h3 id="mtitle"></h3><p id="mdesc"></p></div><button class="x" id="mclose" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <div id="mgal"></div>
-    <a class="btn btn-p" id="mwa">اطلب هذه الخدمة</a>
-  </div>
-</div>
-<div class="pay" id="pay" role="dialog" aria-modal="true" aria-labelledby="ptitle">
-  <div class="box">
-    <button class="x" type="button" id="pclose" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-    <div class="steps-bar" id="pbar"><i></i><i></i><i></i><i></i></div>
-    <div id="pbody"></div>
-  </div>
-</div>
-<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="عرض العمل"><button class="x btn btn-o" id="lbclose" aria-label="إغلاق">إغلاق</button><div id="lbin"></div></div>
-
-<script src="assets/site.js?v=6"></script>
+      <div class="social-item">
+        <a href="https://www.instagram.com/shafq.media" target="_blank" rel="noopener" aria-label="حساب شفق ميديا على إنستغرام">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></svg>
+        </a>
+      </div>
+    </nav>
+  </section>
+</main>
 </body>
 </html>
