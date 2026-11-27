@@ -365,3 +365,10 @@ i.kf{font-style:normal;display:inline-block;white-space:nowrap}
 .about .grid.one p.body{max-width:none}
 .about .grid.one p.body+p.body{margin-top:12px}
 .lb iframe.dv{width:min(92vw,1100px);height:min(86vh,640px);border:0;border-radius:8px;background:#000}
+
+.portal-app{padding-block:0 36px}
+.portal-app-link{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.portal-app-link .d{display:block}
+.portal-app-link:hover .btn-p,.portal-app-link:focus-visible .btn-p{background:var(--ink);color:var(--lime)}
+@media(max-width:520px){.portal-app-link{align-items:flex-start;flex-direction:column}.portal-app-link .btn{align-self:stretch}}
+@media(prefers-reduced-motion:reduce){.portal-app-link,.portal-app-link::before,.portal-app-link *{transition:none!important}.portal-app-link:hover,.portal-app-link:focus-visible{transform:none}}

@@ -45,6 +45,13 @@
     var site = document.createElement('script');
     site.src = 'assets/site.js?v=6';
     document.body.appendChild(site);
+
+    // A profile is only needed for the app shortcut, not for the website.
+    try {
+      if (await server.activeProfile()) document.querySelector('.portal-app').hidden = false;
+    } catch (error) {
+      // Keep the shortcut hidden when the account's permissions cannot be checked.
+    }
   }
 
   window.addEventListener('pageshow', function (event) {

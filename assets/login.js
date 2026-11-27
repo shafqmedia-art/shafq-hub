@@ -150,10 +150,13 @@
       announce('انتهت جلسة الدخول. اطلب رمزاً جديداً.');
       return;
     }
-    var isStaffOrClient = await server.activeProfile();
     var requestedRoute = new URLSearchParams(window.location.search).get('view') || '';
     var appRoute = /^#\/[a-z0-9/_%.-]{0,240}$/i.test(requestedRoute) ? requestedRoute : '';
-    window.location.replace(isStaffOrClient ? 'shafq-app/' + appRoute : 'portal.html');
+    if (appRoute && await server.activeProfile()) {
+      window.location.replace('shafq-app/' + appRoute);
+      return;
+    }
+    window.location.replace('portal.html');
   }
 
   if (server && server.enabled && server.hasSession()) {
